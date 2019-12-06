@@ -1,0 +1,17 @@
+.AddTransactionForm-container {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+}
+
+.AddTransactionForm-label {
+  grid-column: 1 / 2;
+}
+
+.AddTransactionForm-input {
+  grid-column: 2 / 3;
+  font-size: calc(10px + 2vmin);
+}
+
+.Categories__menu {
+  color: black;
+}
