@@ -1,4 +1,10 @@
 import React, { Component } from 'react';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 import './App.css';
 import AddTransactionForm from './AddTransactionForm.js';
 import ConfigInfoForm from './ConfigInfoForm.js';
@@ -34,27 +40,58 @@ class App extends Component {
       button = <LoginButton onClick={this.handleLoginClick} />;
     }
 
+        // <header className="App-header">
+
+        //   { !configSet && <ConfigInfoForm onSubmit={this.handleConfigInfoSubmit} config={this.state.config} /> }
+
+        //   <button onClick={this.clearConfig}>Clear config</button>
+
+        //   { this.state.errorMessage && <label>Error: {this.state.errorMessage}</label> }
+        //   <Greeting isLoggedIn={isLoggedIn} />
+        //   {button}
+        //   <Transactions transactions={this.state.transactions} />
+
+        //   <button onClick={this.loadTransactions}>Load Transactions</button>
+
+        //   <AddTransactionForm />
+        // </header>
     return (
-      <div className="App">
-        <header className="App-header">
+      <Router>
+        <div className="App">
+          <div className="App-header">
+            <h2 className="App-header-text">Budget</h2>
+          </div>
 
-          { !configSet && <ConfigInfoForm onSubmit={this.handleConfigInfoSubmit} config={this.state.config} /> }
+          <div className="App-main">
+            <Switch>
+              <Route path="/add">
+                <h1>Add</h1>
+              </Route>
+              <Route path="/settings">
+                <h1>Settings</h1>
+              </Route>
+              <Route path="/">
+                <h1>Home</h1>
+              </Route>
+            </Switch>
+          </div>
 
-          <button onClick={this.clearConfig}>Clear config</button>
-
-          { this.state.errorMessage && <label>Error: {this.state.errorMessage}</label> }
-          <Greeting isLoggedIn={isLoggedIn} />
-          {button}
-          <Transactions transactions={this.state.transactions} />
-
-          <button onClick={this.loadTransactions}>Load Transactions</button>
-
-          <AddTransactionForm />
-        </header>
-      </div>
+          <nav className="App-navbar">
+            <div className="App-navbar-home">
+              <Link to="/">Home</Link>
+            </div>
+            <div className="App-navbar-add">
+              <Link to="/add">Add Transaction</Link>
+              <label></label>
+            </div>
+            <div className="App-navbar-settings">
+              <Link to="/settings">Settings</Link>
+            </div>
+          </nav>
+        </div>
+      </Router>
     );
   }
-
   componentDidMount(){
     this.setupAPIClient(null);
   }
