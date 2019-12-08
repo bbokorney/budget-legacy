@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './AddTransactionForm.css';
+import '../AddTransactionForm/AddTransactionForm.css';
 
 class ConfigInfoForm extends Component {
   constructor(props) {

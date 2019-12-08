@@ -6,8 +6,8 @@ import {
   Link
 } from "react-router-dom";
 import './App.css';
-import AddTransactionForm from './AddTransactionForm.js';
-import ConfigInfoForm from './ConfigInfoForm.js';
+import AddTransactionForm from '../AddTransactionForm/AddTransactionForm.js';
+import ConfigInfoForm from '../ConfigInfoForm/ConfigInfoForm.js';
 
 class App extends Component {
   constructor(props) {
@@ -40,9 +40,6 @@ class App extends Component {
       button = <LoginButton onClick={this.handleLoginClick} />;
     }
 
-        // <header className="App-header">
-
-        //   { !configSet && <ConfigInfoForm onSubmit={this.handleConfigInfoSubmit} config={this.state.config} /> }
 
         //   <button onClick={this.clearConfig}>Clear config</button>
 
@@ -53,7 +50,6 @@ class App extends Component {
 
         //   <button onClick={this.loadTransactions}>Load Transactions</button>
 
-        //   <AddTransactionForm />
         // </header>
     return (
       <Router>
@@ -65,10 +61,10 @@ class App extends Component {
           <div className="App-main">
             <Switch>
               <Route path="/add">
-                <h1>Add</h1>
+                <AddTransactionForm />
               </Route>
               <Route path="/settings">
-                <h1>Settings</h1>
+                <ConfigInfoForm onSubmit={this.handleConfigInfoSubmit} config={this.state.config} />
               </Route>
               <Route path="/">
                 <h1>Home</h1>
@@ -92,6 +88,7 @@ class App extends Component {
       </Router>
     );
   }
+
   componentDidMount(){
     this.setupAPIClient(null);
   }
