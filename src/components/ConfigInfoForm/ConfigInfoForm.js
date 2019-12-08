@@ -5,7 +5,6 @@ class ConfigInfoForm extends Component {
   constructor(props) {
     super(props);
     const config = this.props.config;
-    console.log(config);
     this.state = {
       clientId: config.clientId ? config.clientId : "",
       apiKey: config.apiKey,

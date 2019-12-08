@@ -69,17 +69,17 @@ class App extends Component {
           </div>
 
           <nav className="App-navbar">
-            <div className="App-navbar-home">
-              <Link to="/"><FaHome /></Link>
+            <div className="App-navbar-home App-navbar-item">
+              <Link className="App-navbar-link" to="/"><FaHome className="App-navbar-icon" /></Link>
             </div>
-            <div className="App-navbar-add">
-              <Link to="/add"><FaPlus /></Link>
+            <div className="App-navbar-add App-navbar-item">
+              <Link className="App-navbar-link" to="/add"><FaPlus className="App-navbar-icon" /></Link>
             </div>
-            <div className="App-navbar-list">
-              <Link to="/list"><FaList /></Link>
+            <div className="App-navbar-list App-navbar-item">
+              <Link className="App-navbar-link" to="/list"><FaList className="App-navbar-icon" /></Link>
             </div>
-            <div className="App-navbar-settings">
-              <Link to="/settings"><FaCog /></Link>
+            <div className="App-navbar-settings App-navbar-item">
+              <Link className="App-navbar-link" to="/settings"><FaCog className="App-navbar-icon" /></Link>
             </div>
           </nav>
         </div>
@@ -232,7 +232,7 @@ class App extends Component {
 }
 
 function Transactions(props) {
-  const listItems = this.props.transactions.map((t, i) => 
+  const listItems = props.transactions.map((t, i) =>
     <li key={i}>{t.date.concat(t.amount, t.category, t.vendor)}</li>
   );
 

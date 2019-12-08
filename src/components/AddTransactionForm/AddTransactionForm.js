@@ -14,6 +14,9 @@ class AddTransactionForm extends Component {
       floatAmount: 0,
       category: "",
       vendor: "",
+      addingTransaction: false,
+      transactionAdded: false,
+      error: "",
     };
 
     this.categories = [
@@ -56,19 +59,41 @@ class AddTransactionForm extends Component {
   }
 
   addTransaction = () => {
+    const currentComponent = this;
+
+    currentComponent.setState({
+      addingTransaction: true,
+      transactionAdded: false,
+      error: "",
+    });
+
     window.gapi.client.load("sheets", "v4", () => {
       window.gapi.client.sheets.spreadsheets.values.append({
         spreadsheetId :'1H89VCjaXRq5d4XT8J92N7eavaBIvIGSfP240VOMasRo',
         range: 'Transactions',
         valueInputOption: 'USER_ENTERED',
-        resource: this.formatTransactionRow(),
+        resource: currentComponent.formatTransactionRow(),
       })
       .then(response => {
         console.log(response);
-        // this.setState
+        currentComponent.setState({
+          addingTransaction: false,
+          transactionAdded: true,
+          date: new Date(),
+          amount: "",
+          floatAmount: 0,
+          category: "",
+          vendor: "",
+          error: "",
+        });
       })
       .catch(error => {
         console.log(error);
+        currentComponent.setState({
+          addingTransaction: false,
+          transactionAdded: false,
+          error: JSON.stringify(error, null, 2),
+        });
       });
     });
   }
@@ -80,6 +105,8 @@ class AddTransactionForm extends Component {
   }
 
   render() {
+    const disableSubmit = this.state.addingTransaction;
+
     return (
       <form onSubmit={this.handleSubmit} className="AddTransactionForm-container">
         <label className="AddTransactionForm-label">Date:</label>
@@ -88,18 +115,36 @@ class AddTransactionForm extends Component {
           selected={this.state.date}
           onChange={this.handleDateChange}
           onFocus={(e) => e.target.readOnly = true}
+          disabled={disableSubmit}
         />
 
         <label className="AddTransactionForm-label">Amount:</label>
-        <CurrencyInput inputType="tel" className="AddTransactionForm-input" value={this.state.amount} onChangeEvent={this.handleAmountChange} prefix="$" allowEmpty={true} />
+        <CurrencyInput inputType="tel" className="AddTransactionForm-input" value={this.state.amount} onChangeEvent={this.handleAmountChange} prefix="$" allowEmpty={true} disabled={disableSubmit}  />
 
         <label className="AddTransactionForm-label">Category:</label>
-        <Select className="AddTransactionForm-input" classNamePrefix="Categories" options={this.categories} onChange={this.handleCategoryChange} isSearchable={false} />
+        <Select
+          className="AddTransactionForm-input"
+          classNamePrefix="Categories"
+          options={this.categories}
+          onChange={this.handleCategoryChange}
+          isSearchable={false}
+          disabled={disableSubmit}
+        />
 
         <label className="AddTransactionForm-label">Vendor:</label>
-        <input className="AddTransactionForm-input" type="text" value={this.state.vendor} onChange={this.handleVendorChange} />
+        <input
+          className="AddTransactionForm-input"
+          type="text"
+          value={this.state.vendor}
+          onChange={this.handleVendorChange}
+          disabled={disableSubmit}
+        />
 
-        <input className="AddTransactionForm-input" type="submit" value="Add Transaction" />
+        <input className="AddTransactionForm-input" type="submit" value="Add Transaction" disabled={disableSubmit} />
+
+        {this.state.addingTransaction && <p>Adding transaction...</p>}
+        {this.state.transactionAdded && <p>Transaction added!</p>}
+        {this.state.error && <p>{this.state.error}</p>}
       </form>
     )
   }

@@ -5,7 +5,7 @@
   text-align: center;
   display: grid;
   grid-template-columns: auto;
-  grid-template-rows: 50px 1fr 50px;
+  grid-template-rows: 50px 1fr 80px;
   grid-template-areas: 
     "header"
     "main"
@@ -24,12 +24,18 @@
 
 .App-main {
   grid-area: main;
+  overflow: auto;
 }
 
 .App-navbar {
   grid-area: navbar;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.App-navbar-item {
+  place-self: stretch;
+  display: grid;
 }
 
 .App-navbar-home {
@@ -48,18 +54,16 @@
   grid-column: 4 / 5;
 }
 
-.App-logo {
-  height: 40vmin;
-}
-
-.App-link {
-  color: #09d3ac;
-}
-
-a {
+.App-navbar-link {
   text-decoration: none;
+  display: grid;
+  place-self: stretch;
 }
 
-a:visited, a:link {
+.App-navbar-icon {
+  place-self: center;
+}
+
+.App-navbar-link:visited, .App-navbar-link:link {
   color: white;
 }
