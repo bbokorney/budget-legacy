@@ -31,32 +31,14 @@ class App extends Component {
   }
 
   render() {
-    const configSet = this.allConfigSet(this.state.config);
-    const isLoggedIn = this.state.isLoggedIn;
-    let button;
-
-    if (isLoggedIn) {
-      button = <LogoutButton onClick={this.handleLogoutClick} />;
-    } else {
-      button = <LoginButton onClick={this.handleLoginClick} />;
-    }
-
-
-        //   <button onClick={this.clearConfig}>Clear config</button>
-
-        //   { this.state.errorMessage && <label>Error: {this.state.errorMessage}</label> }
-        //   <Greeting isLoggedIn={isLoggedIn} />
-        //   {button}
-        //   <Transactions transactions={this.state.transactions} />
-
-        //   <button onClick={this.loadTransactions}>Load Transactions</button>
-
-        // </header>
     return (
       <Router>
         <div className="App">
           <div className="App-header">
             <h2 className="App-header-text">Budget</h2>
+          </div>
+          <div>
+            { this.state.errorMessage && <label>Error: {this.state.errorMessage}</label> }
           </div>
 
           <div className="App-main">
@@ -65,10 +47,20 @@ class App extends Component {
                 <AddTransactionForm />
               </Route>
               <Route path="/list">
-                <h1>List</h1>
+                <div>
+                  <h1>Transactions</h1>
+                  <Transactions transactions={this.state.transactions} />
+                </div>
               </Route>
               <Route path="/settings">
-                <ConfigInfoForm onSubmit={this.handleConfigInfoSubmit} config={this.state.config} />
+                <ConfigInfoForm
+                  clearConfig={this.clearConfig}
+                  onSubmit={this.handleConfigInfoSubmit}
+                  config={this.state.config}
+                  isLoggedIn={this.state.isLoggedIn}
+                  handleLoginClick={this.handleLoginClick}
+                  handleLogoutClick={this.handleLogoutClick}
+                />
               </Route>
               <Route path="/">
                 <h1>Home</h1>
@@ -185,6 +177,7 @@ class App extends Component {
 
       // Handle the initial sign-in state.
       currentComponent.updateSigninStatus(window.gapi.auth2.getAuthInstance().isSignedIn.get());
+      currentComponent.loadTransactions();
     }, function(error) {
       currentComponent.handleError(error);
     });
@@ -239,48 +232,15 @@ class App extends Component {
 }
 
 function Transactions(props) {
-  const listItems = props.transactions.map((t) => 
-    <li>{t.date.concat(t.amount, t.category, t.vendor)}</li>
+  const listItems = this.props.transactions.map((t, i) => 
+    <li key={i}>{t.date.concat(t.amount, t.category, t.vendor)}</li>
   );
-  
+
   return (
     <div>
-      <label>Transactions</label>
       <ul>{listItems}</ul>
     </div>
   );
-}
-
-function LoginButton(props) {
-  return (
-    <button onClick={props.onClick}>
-      Login
-    </button>
-  );
-}
-
-function LogoutButton(props) {
-  return (
-    <button onClick={props.onClick}>
-      Logout
-    </button>
-  );
-}
-
-function UserGreeting(props) {
-  return <h1>Welcome back!</h1>;
-}
-
-function GuestGreeting(props) {
-  return <h1>Please sign in.</h1>;
-}
-
-function Greeting(props) {
-  const isLoggedIn = props.isLoggedIn;
-  if (isLoggedIn) {
-    return <UserGreeting />;
-  }
-  return <GuestGreeting />;
 }
 
 export default App;
