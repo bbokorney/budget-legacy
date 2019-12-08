@@ -29,7 +29,7 @@
 .App-navbar {
   grid-area: navbar;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 
 .App-navbar-home {
@@ -40,8 +40,12 @@
   grid-column: 2 / 3;
 }
 
-.App-navbar-settings {
+.App-navbar-list {
   grid-column: 3 / 4;
+}
+
+.App-navbar-settings {
+  grid-column: 4 / 5;
 }
 
 .App-logo {

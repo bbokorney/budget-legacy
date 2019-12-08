@@ -8,6 +8,7 @@ import {
 import './App.css';
 import AddTransactionForm from '../AddTransactionForm/AddTransactionForm.js';
 import ConfigInfoForm from '../ConfigInfoForm/ConfigInfoForm.js';
+import { FaHome, FaPlus, FaCog, FaList } from 'react-icons/fa';
 
 class App extends Component {
   constructor(props) {
@@ -63,6 +64,9 @@ class App extends Component {
               <Route path="/add">
                 <AddTransactionForm />
               </Route>
+              <Route path="/list">
+                <h1>List</h1>
+              </Route>
               <Route path="/settings">
                 <ConfigInfoForm onSubmit={this.handleConfigInfoSubmit} config={this.state.config} />
               </Route>
@@ -74,14 +78,16 @@ class App extends Component {
 
           <nav className="App-navbar">
             <div className="App-navbar-home">
-              <Link to="/">Home</Link>
+              <Link to="/"><FaHome /></Link>
             </div>
             <div className="App-navbar-add">
-              <Link to="/add">Add Transaction</Link>
-              <label></label>
+              <Link to="/add"><FaPlus /></Link>
+            </div>
+            <div className="App-navbar-list">
+              <Link to="/list"><FaList /></Link>
             </div>
             <div className="App-navbar-settings">
-              <Link to="/settings">Settings</Link>
+              <Link to="/settings"><FaCog /></Link>
             </div>
           </nav>
         </div>
