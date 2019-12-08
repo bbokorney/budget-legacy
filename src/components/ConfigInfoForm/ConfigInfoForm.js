@@ -57,6 +57,7 @@ class ConfigInfoForm extends Component {
 
         <p>{text}</p>
         {button}
+        <p>App version {this.props.version}</p>
       </div>
     );
   }

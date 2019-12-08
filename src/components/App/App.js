@@ -60,6 +60,7 @@ class App extends Component {
                   isLoggedIn={this.state.isLoggedIn}
                   handleLoginClick={this.handleLoginClick}
                   handleLogoutClick={this.handleLogoutClick}
+                  version={this.props.version}
                 />
               </Route>
               <Route path="/">
