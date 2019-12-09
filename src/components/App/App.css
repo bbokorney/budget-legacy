@@ -67,3 +67,41 @@
 .App-navbar-link:visited, .App-navbar-link:link {
   color: white;
 }
+
+.Transactions-container {
+  padding-inline-start: 0px;
+}
+
+.Transactions-list {
+  list-style-type: none;
+  border-bottom-style: solid;
+  border-bottom-color: #757575;
+  border-bottom-width: 1px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas:
+    "amount date"
+    "category vendor";
+}
+
+.Transactions-list-item {
+  padding-bottom: 5px;
+  padding-top: 5px;
+}
+
+.Transactions-list-amount {
+  grid-area: amount;
+}
+
+.Transactions-list-date {
+  grid-area: date;
+}
+
+.Transactions-list-category {
+  grid-area: category;
+}
+
+.Transactions-list-vendor {
+  grid-area: vendor;
+}

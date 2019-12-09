@@ -19,8 +19,8 @@ class App extends Component {
       transactions: [],
       config: {
         clientId: this.loadFromConfigWithDefault('clientId', ""),
-        apiKey: this.loadFromConfigWithDefault('apiKey'),
-        sheetId: this.loadFromConfigWithDefault('sheetId'),
+        apiKey: this.loadFromConfigWithDefault('apiKey', ""),
+        sheetId: this.loadFromConfigWithDefault('sheetId', ""),
       },
     };
   }
@@ -47,10 +47,7 @@ class App extends Component {
                 <AddTransactionForm />
               </Route>
               <Route path="/list">
-                <div>
-                  <h1>Transactions</h1>
-                  <Transactions transactions={this.state.transactions} />
-                </div>
+                <Transactions transactions={this.state.transactions} />
               </Route>
               <Route path="/settings">
                 <ConfigInfoForm
@@ -234,13 +231,16 @@ class App extends Component {
 
 function Transactions(props) {
   const listItems = props.transactions.map((t, i) =>
-    <li key={i}>{t.date.concat(t.amount, t.category, t.vendor)}</li>
+    <li key={i} className="Transactions-list">
+      <span className="Transactions-list-item Transactions-list-amount">{t.amount}</span>
+      <span className="Transactions-list-item Transactions-list-date">{t.date}</span>
+      <span className="Transactions-list-item Transactions-list-category">{t.category}</span>
+      <span className="Transactions-list-item Transactions-list-vendor">{t.vendor ? t.vendor : "No vendor"}</span>
+    </li>
   );
 
   return (
-    <div>
-      <ul>{listItems}</ul>
-    </div>
+    <ul className="Transactions-container">{listItems}</ul>
   );
 }
 
