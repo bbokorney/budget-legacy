@@ -86,22 +86,26 @@
 }
 
 .Transactions-list-item {
-  padding-bottom: 5px;
-  padding-top: 5px;
 }
 
 .Transactions-list-amount {
   grid-area: amount;
+  padding-top: 10px;
+  font-family: monospace;
+  color: #f9900a;
 }
 
 .Transactions-list-date {
   grid-area: date;
+  padding-top: 10px;
 }
 
 .Transactions-list-category {
   grid-area: category;
+  padding-bottom: 10px;
 }
 
 .Transactions-list-vendor {
   grid-area: vendor;
+  padding-bottom: 10px;
 }

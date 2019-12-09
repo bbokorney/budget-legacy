@@ -1,17 +1,37 @@
 .AddTransactionForm-container {
   display: grid;
   grid-template-columns: 1fr 3fr;
+  grid-row-gap: 15px;
+  padding: 10px 20px;
 }
 
 .AddTransactionForm-label {
   grid-column: 1 / 2;
+  align-self: center;
 }
 
 .AddTransactionForm-input {
   grid-column: 2 / 3;
   font-size: calc(10px + 2vmin);
+  border-radius: 4px;
+  padding: 10px 8px;
+}
+
+.AddTransactionForm-category {
+  padding: 0px 0px;
 }
 
 .Categories__menu {
   color: black;
+}
+
+.AddTransactionForm-datepicker-container {
+  display: grid;
+}
+
+.AddTransactionForm-datepicker {
+  font-size: calc(10px + 2vmin);
+  border-radius: 4px;
+  padding: 10px 8px;
+  align-self: center;
 }

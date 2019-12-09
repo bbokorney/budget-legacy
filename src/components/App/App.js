@@ -232,7 +232,7 @@ class App extends Component {
 function Transactions(props) {
   const listItems = props.transactions.map((t, i) =>
     <li key={i} className="Transactions-list">
-      <span className="Transactions-list-item Transactions-list-amount">{t.amount}</span>
+      <b className="Transactions-list-item Transactions-list-amount">{t.amount}</b>
       <span className="Transactions-list-item Transactions-list-date">{t.date}</span>
       <span className="Transactions-list-item Transactions-list-category">{t.category}</span>
       <span className="Transactions-list-item Transactions-list-vendor">{t.vendor ? t.vendor : "No vendor"}</span>

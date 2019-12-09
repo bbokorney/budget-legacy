@@ -106,47 +106,66 @@ class AddTransactionForm extends Component {
 
   render() {
     const disableSubmit = this.state.addingTransaction;
-
     return (
-      <form onSubmit={this.handleSubmit} className="AddTransactionForm-container">
-        <label className="AddTransactionForm-label">Date:</label>
-        <DatePicker
-          className="AddTransactionForm-input"
-          selected={this.state.date}
-          onChange={this.handleDateChange}
-          onFocus={(e) => e.target.readOnly = true}
-          disabled={disableSubmit}
-        />
+      <div>
+        <form onSubmit={this.handleSubmit} className="AddTransactionForm-container">
+          <label className="AddTransactionForm-label">Date:</label>
+          <DatePicker
+            className="AddTransactionForm-datepicker"
+            calendarClassName="AddTransactionForm-datepicker-container"
+            selected={this.state.date}
+            onChange={this.handleDateChange}
+            onFocus={(e) => e.target.readOnly = true}
+            disabled={disableSubmit}
+            customInput={<DatePickerContainer disabled={disableSubmit} />}
+          />
 
-        <label className="AddTransactionForm-label">Amount:</label>
-        <CurrencyInput inputType="tel" className="AddTransactionForm-input" value={this.state.amount} onChangeEvent={this.handleAmountChange} prefix="$" allowEmpty={true} disabled={disableSubmit}  />
+          <label className="AddTransactionForm-label">Amount:</label>
+          <CurrencyInput inputType="tel" className="AddTransactionForm-input" value={this.state.amount} onChangeEvent={this.handleAmountChange} prefix="$" allowEmpty={true} disabled={disableSubmit}  />
 
-        <label className="AddTransactionForm-label">Category:</label>
-        <Select
-          className="AddTransactionForm-input"
-          classNamePrefix="Categories"
-          options={this.categories}
-          onChange={this.handleCategoryChange}
-          isSearchable={false}
-          disabled={disableSubmit}
-        />
+          <label className="AddTransactionForm-label">Category:</label>
+          <Select
+            className="AddTransactionForm-input AddTransactionForm-category"
+            classNamePrefix="Categories"
+            options={this.categories}
+            onChange={this.handleCategoryChange}
+            isSearchable={false}
+            disabled={disableSubmit}
+          />
 
-        <label className="AddTransactionForm-label">Vendor:</label>
-        <input
-          className="AddTransactionForm-input"
-          type="text"
-          value={this.state.vendor}
-          onChange={this.handleVendorChange}
-          disabled={disableSubmit}
-        />
+          <label className="AddTransactionForm-label">Vendor:</label>
+          <input
+            className="AddTransactionForm-input"
+            type="text"
+            value={this.state.vendor}
+            onChange={this.handleVendorChange}
+            disabled={disableSubmit}
+          />
 
-        <input className="AddTransactionForm-input" type="submit" value="Add Transaction" disabled={disableSubmit} />
+          <input className="AddTransactionForm-input" type="submit" value="Add Transaction" disabled={disableSubmit} />
 
+        </form>
         {this.state.addingTransaction && <p>Adding transaction...</p>}
         {this.state.transactionAdded && <p>Transaction added!</p>}
         {this.state.error && <p>{this.state.error}</p>}
-      </form>
+      </div>
     )
+  }
+}
+
+class DatePickerContainer extends Component {
+  render() {
+    return (
+      <div className="AddTransactionForm-datepicker-container">
+        <input value={this.props.value} onChange={this.props.onChange}
+          onClick={this.props.onClick}
+          type="text"
+          className="AddTransactionForm-datepicker"
+          readOnly={true}
+          disabled={this.props.disabled}
+        />
+      </div>
+    );
   }
 }
 export default AddTransactionForm;
