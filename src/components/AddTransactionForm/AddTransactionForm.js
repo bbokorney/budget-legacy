@@ -12,7 +12,7 @@ class AddTransactionForm extends Component {
       date: new Date(),
       amount: "",
       floatAmount: 0,
-      category: "",
+      category: null,
       vendor: "",
       addingTransaction: false,
       transactionAdded: false,
@@ -38,7 +38,7 @@ class AddTransactionForm extends Component {
   };
 
   handleCategoryChange = (category) => {
-    this.setState({ category: category.value });
+    this.setState({ category: category });
   };
 
   handleVendorChange = (event) => {
@@ -100,11 +100,38 @@ class AddTransactionForm extends Component {
 
   formatTransactionRow = () => {
     return {
-      values: [[this.getFormattedDate(this.state.date), this.state.amount, this.state.category, this.state.vendor]],
+      values: [[this.getFormattedDate(this.state.date), this.state.amount, this.state.category.value, this.state.vendor]],
     };
   }
 
   render() {
+    // Fix autofocus issues with CurrencyInput
+    // on iOS it will still auto focus even if autoFocus=false
+    // see https://github.com/jsillitoe/react-currency-input/issues/90
+    let componentDidMount_super = CurrencyInput.prototype.componentDidMount;
+    CurrencyInput.prototype.componentDidMount = function() {
+        if(!this.props.autoFocus) {
+            let setSelectionRange_super = this.theInput.setSelectionRange;
+            this.theInput.setSelectionRange = () => {};
+            componentDidMount_super.call(this, ...arguments);
+            this.theInput.setSelectionRange = setSelectionRange_super;
+        }
+        else {
+            componentDidMount_super.call(this, ...arguments);
+        }
+    };
+    let componentDidUpdate_super = CurrencyInput.prototype.componentDidUpdate;
+    CurrencyInput.prototype.componentDidUpdate = function() {
+        if(!this.props.autoFocus) {
+            let setSelectionRange_super = this.theInput.setSelectionRange;
+            this.theInput.setSelectionRange = () => {};
+            componentDidUpdate_super.call(this, ...arguments);
+            this.theInput.setSelectionRange = setSelectionRange_super;
+        }
+        else {
+            componentDidMount_super.call(this, ...arguments);
+        }
+    };
     const disableSubmit = this.state.addingTransaction;
     return (
       <div>
@@ -121,7 +148,17 @@ class AddTransactionForm extends Component {
           />
 
           <label className="AddTransactionForm-label">Amount:</label>
-          <CurrencyInput inputType="tel" className="AddTransactionForm-input" value={this.state.amount} onChangeEvent={this.handleAmountChange} prefix="$" allowEmpty={true} disabled={disableSubmit}  />
+          <CurrencyInput
+            inputType="tel"
+            className="AddTransactionForm-input"
+            value={this.state.amount}
+            onChangeEvent={this.handleAmountChange}
+            prefix="$"
+            allowEmpty={true}
+            disabled={disableSubmit}
+            autoFocus={false}
+            onFocus={(e) => e.target.value = ""}
+          />
 
           <label className="AddTransactionForm-label">Category:</label>
           <Select
@@ -131,6 +168,7 @@ class AddTransactionForm extends Component {
             onChange={this.handleCategoryChange}
             isSearchable={false}
             disabled={disableSubmit}
+            value={this.state.category}
           />
 
           <label className="AddTransactionForm-label">Vendor:</label>

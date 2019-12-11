@@ -37,9 +37,6 @@ class App extends Component {
           <div className="App-header">
             <h2 className="App-header-text">Budget</h2>
           </div>
-          <div>
-            { this.state.errorMessage && <label>Error: {this.state.errorMessage}</label> }
-          </div>
 
           <div className="App-main">
             <Switch>
@@ -64,6 +61,9 @@ class App extends Component {
                 <h1>Home</h1>
               </Route>
             </Switch>
+            <div>
+              { this.state.errorMessage && <label>Error: {this.state.errorMessage}</label> }
+            </div>
           </div>
 
           <nav className="App-navbar">
