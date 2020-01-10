@@ -18,15 +18,6 @@ class AddTransactionForm extends Component {
       transactionAdded: false,
       error: "",
     };
-
-    this.categories = [
-      { value: 'Grocery', label: 'Grocery' },
-      { value: 'Restaurant', label: 'Restaurant' },
-      { value: 'To go food', label: 'To go food' },
-      { value: 'Gas', label: 'Gas' },
-      { value: 'Auto insurance', label: 'Auto insurance' },
-      { value: 'Rent', label: 'Rent' },
-    ];
   }
 
   handleAmountChange = (event, maskedValue, floatValue) => {
@@ -104,6 +95,19 @@ class AddTransactionForm extends Component {
     };
   }
 
+  transformCategories = (categories) => {
+    return categories
+      .sort((x, y) => {
+        return y.count - x.count;
+      })
+      .map((c) => {
+        return {
+          label: c.name,
+          value: c.name,
+        };
+    });
+  }
+
   render() {
     // Fix autofocus issues with CurrencyInput
     // on iOS it will still auto focus even if autoFocus=false
@@ -164,7 +168,7 @@ class AddTransactionForm extends Component {
           <Select
             className="AddTransactionForm-input AddTransactionForm-category"
             classNamePrefix="Categories"
-            options={this.categories}
+            options={this.transformCategories(this.props.categories)}
             onChange={this.handleCategoryChange}
             isSearchable={false}
             disabled={disableSubmit}

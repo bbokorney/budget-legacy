@@ -17,6 +17,7 @@ class App extends Component {
       errorMessage: "",
       isLoggedIn: false,
       transactions: [],
+      categories: [],
       config: {
         clientId: this.loadFromConfigWithDefault('clientId', ""),
         apiKey: this.loadFromConfigWithDefault('apiKey', ""),
@@ -41,7 +42,7 @@ class App extends Component {
           <div className="App-main">
             <Switch>
               <Route path="/add">
-                <AddTransactionForm />
+                <AddTransactionForm categories={this.state.categories} />
               </Route>
               <Route path="/list">
                 <Transactions transactions={this.state.transactions} />
@@ -176,6 +177,7 @@ class App extends Component {
       // Handle the initial sign-in state.
       currentComponent.updateSigninStatus(window.gapi.auth2.getAuthInstance().isSignedIn.get());
       currentComponent.loadTransactions();
+      currentComponent.loadCategories();
     }, function(error) {
       currentComponent.handleError(error);
     });
@@ -208,7 +210,7 @@ class App extends Component {
         range: 'Transactions',
       })
       .then(response => {
-        this.setState({transactions: this.transformResults(response)});
+        this.setState({transactions: this.transformTransactionResults(response)});
       })
       .catch(error => {
         this.handleError(error);
@@ -216,15 +218,37 @@ class App extends Component {
     });
   }
 
-  transformResults = (response) => {
+  transformTransactionResults = (response) => {
     const values = response.result.values;
-    return values.slice(1, values.length).map((v) => {
+    return values.slice(0, values.length).map((v) => {
       return {
         date: v[0],
         amount: v[1],
         category: v[2],
         vendor: v[3],
       };
+    });
+  }
+
+  loadCategories = () => {
+    window.gapi.client.load("sheets", "v4", () => {
+      window.gapi.client.sheets.spreadsheets.values.get({
+        spreadsheetId: this.state.config.sheetId,
+        range: 'Categories!A1:B',
+      })
+      .then(response => {
+        const values = response.result.values;
+        const categories = values.map((v) => {
+          return {
+            name: v[0],
+            count: v[1],
+          };
+        });
+        this.setState({categories: categories});
+      })
+      .catch(error => {
+        this.handleError(error);
+      });
     });
   }
 }
