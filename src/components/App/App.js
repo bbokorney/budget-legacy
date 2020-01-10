@@ -176,7 +176,7 @@ class App extends Component {
 
       // Handle the initial sign-in state.
       currentComponent.updateSigninStatus(window.gapi.auth2.getAuthInstance().isSignedIn.get());
-      currentComponent.loadTransactions();
+      // currentComponent.loadTransactions();
       currentComponent.loadCategories();
     }, function(error) {
       currentComponent.handleError(error);

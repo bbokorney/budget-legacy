@@ -4,6 +4,7 @@ import CurrencyInput from 'react-currency-input';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Select from 'react-select'
+import CreatableSelect from 'react-select/creatable';
 
 class AddTransactionForm extends Component {
   constructor(props) {
@@ -30,6 +31,10 @@ class AddTransactionForm extends Component {
 
   handleCategoryChange = (category) => {
     this.setState({ category: category });
+  };
+
+  handleTagsChange = (tags) => {
+    this.setState({ tags: tags });
   };
 
   handleVendorChange = (event) => {
@@ -76,6 +81,7 @@ class AddTransactionForm extends Component {
           category: "",
           vendor: "",
           error: "",
+          tags: [],
         });
       })
       .catch(error => {
@@ -90,8 +96,11 @@ class AddTransactionForm extends Component {
   }
 
   formatTransactionRow = () => {
+    const tags = this.state.tags.map((t) => t.value);
+    var innerValues = [this.getFormattedDate(this.state.date), this.state.amount, this.state.category.value, this.state.vendor];
+    innerValues = innerValues.concat(tags);
     return {
-      values: [[this.getFormattedDate(this.state.date), this.state.amount, this.state.category.value, this.state.vendor]],
+      values: [innerValues],
     };
   }
 
@@ -181,6 +190,17 @@ class AddTransactionForm extends Component {
             type="text"
             value={this.state.vendor}
             onChange={this.handleVendorChange}
+            disabled={disableSubmit}
+          />
+
+          <label className="AddTransactionForm-label">Tags:</label>
+          <CreatableSelect
+            className="AddTransactionForm-input AddTransactionForm-category"
+            classNamePrefix="Categories"
+            value={this.state.tags}
+            isMulti={true}
+            onChange={this.handleTagsChange}
+            isSearchable={true}
             disabled={disableSubmit}
           />
 
