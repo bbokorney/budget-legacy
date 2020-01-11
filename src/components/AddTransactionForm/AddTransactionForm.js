@@ -96,7 +96,10 @@ class AddTransactionForm extends Component {
   }
 
   formatTransactionRow = () => {
-    const tags = this.state.tags.map((t) => t.value);
+    var tags = [];
+    if (this.state.tags) {
+      tags = this.state.tags.map((t) => t.value);
+    }
     var innerValues = [this.getFormattedDate(this.state.date), this.state.amount, this.state.category.value, this.state.vendor];
     innerValues = innerValues.concat(tags);
     return {
