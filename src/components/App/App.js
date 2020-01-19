@@ -85,6 +85,8 @@ class App extends Component {
             </div>
           </div>
 
+          <div className="App-blank"></div>
+
           <nav className="App-navbar">
             <div className="App-navbar-home App-navbar-item">
               <Link className="App-navbar-link" to="/"><FaPlus className="App-navbar-icon" /></Link>
@@ -225,9 +227,9 @@ class App extends Component {
 
       // Handle the initial sign-in state.
       currentComponent.updateSigninStatus(window.gapi.auth2.getAuthInstance().isSignedIn.get());
-      // currentComponent.loadTransactions();
       if(currentComponent.state.isLoggedIn) {
         currentComponent.loadCategories();
+        currentComponent.loadTransactions();
       }
     }, function(error) {
       currentComponent.handleError(error);
@@ -262,7 +264,7 @@ class App extends Component {
     window.gapi.client.load("sheets", "v4", () => {
       window.gapi.client.sheets.spreadsheets.values.get({
         spreadsheetId: this.state.config.sheetId,
-        range: 'Transactions',
+        range: 'Current Month Transactions',
       })
       .then(response => {
         this.setState({transactions: this.transformTransactionResults(response)});
@@ -312,8 +314,8 @@ function Transactions(props) {
   const listItems = props.transactions.map((t, i) =>
     <li key={i} className="Transactions-list">
       <b className="Transactions-list-item Transactions-list-amount">{t.amount}</b>
-      <span className="Transactions-list-item Transactions-list-date">{t.date}</span>
-      <span className="Transactions-list-item Transactions-list-category">{t.category}</span>
+      <span className="Transactions-list-item Transactions-list-date">{prettyDate(t.date)}</span>
+      <span className="Transactions-list-item Transactions-list-category"><b>{t.category}</b></span>
       <span className="Transactions-list-item Transactions-list-vendor">{t.vendor ? t.vendor : "No vendor"}</span>
     </li>
   );
@@ -321,6 +323,14 @@ function Transactions(props) {
   return (
     <ul className="Transactions-container">{listItems}</ul>
   );
+}
+
+function prettyDate(dateString) {
+  const date = new Date(dateString);
+  const monthNames = ["Jan", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  return monthNames[date.getMonth()] + " " + date.getDay();
 }
 
 export default App;

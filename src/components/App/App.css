@@ -5,10 +5,11 @@
   text-align: center;
   display: grid;
   grid-template-columns: auto;
-  grid-template-rows: 50px 1fr;
+  grid-template-rows: 50px 1fr 60px;
   grid-template-areas: 
     "header"
-    "main";
+    "main"
+    "blank";
   height: 100vh;
 }
 
@@ -32,6 +33,10 @@
 .App-main {
   grid-area: main;
   overflow: auto;
+}
+
+.App-blank {
+  grid-area: blank;
 }
 
 .App-navbar {
@@ -104,7 +109,7 @@
   grid-area: amount;
   padding-top: 10px;
   font-family: monospace;
-  color: #f9900a;
+  color: #6aa84f;
 }
 
 .Transactions-list-date {
