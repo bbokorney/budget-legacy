@@ -16,6 +16,7 @@ class App extends Component {
     this.state = {
       errorMessage: "",
       isLoggedIn: false,
+      initializing: true,
       transactions: [],
       categories: [],
       config: {
@@ -32,6 +33,44 @@ class App extends Component {
   }
 
   render() {
+    var mainBody = (
+              <Switch>
+                <Route path="/add">
+                  <AddTransactionForm categories={this.state.categories} />
+                </Route>
+                <Route path="/list">
+                  <Transactions transactions={this.state.transactions} />
+                </Route>
+                <Route path="/settings">
+                  <ConfigInfoForm
+                    clearConfig={this.clearConfig}
+                    onSubmit={this.handleConfigInfoSubmit}
+                    config={this.state.config}
+                    isLoggedIn={this.state.isLoggedIn}
+                    handleLoginClick={this.handleLoginClick}
+                    handleLogoutClick={this.handleLogoutClick}
+                    version={this.props.version}
+                  />
+                </Route>
+                <Route path="/">
+                  <h1>Home</h1>
+                </Route>
+              </Switch>
+    );
+
+    if(!this.state.isLoggedIn) {
+      mainBody = (
+        <div>
+          <p>Please log in</p>
+          <button onClick={this.handleLoginClick}> Login </button>
+        </div>
+      );
+    }
+
+    if(this.state.initializing) {
+      mainBody = <p>Loading...</p>;
+    }
+
     return (
       <Router>
         <div className="App">
@@ -40,28 +79,7 @@ class App extends Component {
           </div>
 
           <div className="App-main">
-            <Switch>
-              <Route path="/add">
-                <AddTransactionForm categories={this.state.categories} />
-              </Route>
-              <Route path="/list">
-                <Transactions transactions={this.state.transactions} />
-              </Route>
-              <Route path="/settings">
-                <ConfigInfoForm
-                  clearConfig={this.clearConfig}
-                  onSubmit={this.handleConfigInfoSubmit}
-                  config={this.state.config}
-                  isLoggedIn={this.state.isLoggedIn}
-                  handleLoginClick={this.handleLoginClick}
-                  handleLogoutClick={this.handleLogoutClick}
-                  version={this.props.version}
-                />
-              </Route>
-              <Route path="/">
-                <h1>Home</h1>
-              </Route>
-            </Switch>
+            {mainBody}
             <div>
               { this.state.errorMessage && <label>Error: {this.state.errorMessage}</label> }
             </div>
@@ -143,8 +161,12 @@ class App extends Component {
   }
 
   handleLoginClick = () => {
-    window.gapi.auth2.getAuthInstance().signIn();
-    this.setState({isLoggedIn: true});
+    let currentComponent = this;
+    window.gapi.auth2.getAuthInstance().signIn().then(function() {
+      currentComponent.initClient();
+    }).catch(error => {
+      this.handleError(error);
+    });
   }
 
   handleLogoutClick = () => {
@@ -177,7 +199,9 @@ class App extends Component {
       // Handle the initial sign-in state.
       currentComponent.updateSigninStatus(window.gapi.auth2.getAuthInstance().isSignedIn.get());
       // currentComponent.loadTransactions();
-      currentComponent.loadCategories();
+      if(currentComponent.state.isLoggedIn) {
+        currentComponent.loadCategories();
+      }
     }, function(error) {
       currentComponent.handleError(error);
     });
@@ -195,10 +219,14 @@ class App extends Component {
     if (isSignedIn) {
       this.setState({
         isLoggedIn: true,
+        errorMessage: "",
+        initializing: false,
       });
     } else {
       this.setState({
         isLoggedIn: false,
+        errorMessage: "",
+        initializing: false,
       });
     }
   }
