@@ -16,7 +16,7 @@ class App extends Component {
     this.state = {
       errorMessage: "",
       isLoggedIn: false,
-      initializing: true,
+      initializingMessage: "Loading...",
       transactions: [],
       categories: [],
       config: {
@@ -67,8 +67,8 @@ class App extends Component {
       );
     }
 
-    if(this.state.initializing) {
-      mainBody = <p>Loading...</p>;
+    if(this.state.initializingMessage) {
+      mainBody = <p>{this.state.initializingMessage}</p>;
     }
 
     return (
@@ -113,21 +113,48 @@ class App extends Component {
   }
 
   setupAPIClient = (prevConfig) => {
-    if(!this.allConfigSet(this.state.config)) {
+    this.checkAPIConfigParams();
+
+    if(!this.configChanged(prevConfig, this.state.config)) {
       return;
     }
 
-    if(!this.configChanged(prevConfig, this.state.config)) {
+    if(!this.allConfigSet(this.state.config)) {
+      this.setState({initializingMessage:"App not set up. Please use set up link."});
       return;
     }
 
     window.gapi.load('client:auth2', this.initClient);
   }
 
-  handleConfigInfoSubmit = (config) => {
+  checkAPIConfigParams = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const clientId = urlParams.get('clientId');
+    const apiKey = urlParams.get('apiKey');
+    const sheetId = urlParams.get('sheetId');
+    if(clientId && apiKey && sheetId) {
+      this.saveAPIConfigToLocalStorage({
+        clientId: clientId,
+        apiKey: apiKey,
+        sheetId: sheetId,
+      });
+
+      // redirect to URL without the API info as query params
+      const url = new URL(window.location.href);
+      window.location.href = url.protocol + "//" + url.host
+      return;
+    }
+    return;
+  }
+
+  saveAPIConfigToLocalStorage = (config) => {
     localStorage.setItem('clientId', config.clientId);
     localStorage.setItem('apiKey', config.apiKey);
     localStorage.setItem('sheetId', config.sheetId);
+  }
+
+  handleConfigInfoSubmit = (config) => {
+    this.saveAPIConfigToLocalStorage(config);
     this.setState({config: config});
   }
 
@@ -220,13 +247,13 @@ class App extends Component {
       this.setState({
         isLoggedIn: true,
         errorMessage: "",
-        initializing: false,
+        initializingMessage: "",
       });
     } else {
       this.setState({
         isLoggedIn: false,
         errorMessage: "",
-        initializing: false,
+        initializingMessage: "",
       });
     }
   }
