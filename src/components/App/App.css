@@ -1,25 +1,32 @@
 .App {
-  background-color: #282c34;
+  background-color: white;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: black;
   text-align: center;
   display: grid;
   grid-template-columns: auto;
-  grid-template-rows: 50px 1fr 80px;
+  grid-template-rows: 50px 1fr;
   grid-template-areas: 
     "header"
-    "main"
-    "navbar";
+    "main";
   height: 100vh;
 }
 
 .App-header {
   grid-area: header;
+  display: grid;
+  background-color: #6aa84f;
+  color: white;
 }
 
 .App-header-text {
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
+  align-self: center;
+  justify-self: center;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  font-size: 1.4em;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .App-main {
@@ -28,9 +35,14 @@
 }
 
 .App-navbar {
-  grid-area: navbar;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 60px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
+  background-color: #6aa84f;
 }
 
 .App-navbar-item {

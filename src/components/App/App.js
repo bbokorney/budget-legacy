@@ -75,7 +75,7 @@ class App extends Component {
       <Router>
         <div className="App">
           <div className="App-header">
-            <h2 className="App-header-text">Budget</h2>
+            <p className="App-header-text"><b>Budget</b></p>
           </div>
 
           <div className="App-main">
