@@ -330,7 +330,7 @@ function prettyDate(dateString) {
   const monthNames = ["Jan", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
-  return monthNames[date.getMonth()] + " " + date.getDay();
+  return monthNames[date.getMonth()] + " " + date.getDate();
 }
 
 export default App;
