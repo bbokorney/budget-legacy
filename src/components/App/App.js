@@ -8,7 +8,7 @@ import {
 import './App.css';
 import AddTransactionForm from '../AddTransactionForm/AddTransactionForm.js';
 import ConfigInfoForm from '../ConfigInfoForm/ConfigInfoForm.js';
-import { FaHome, FaPlus, FaCog, FaList } from 'react-icons/fa';
+import { FaPlus, FaCog, FaList, FaChartPie } from 'react-icons/fa';
 
 class App extends Component {
   constructor(props) {
@@ -35,8 +35,8 @@ class App extends Component {
   render() {
     var mainBody = (
               <Switch>
-                <Route path="/add">
-                  <AddTransactionForm categories={this.state.categories} />
+                <Route path="/budget">
+                  <p>Feature coming soon...</p>
                 </Route>
                 <Route path="/list">
                   <Transactions transactions={this.state.transactions} />
@@ -53,7 +53,7 @@ class App extends Component {
                   />
                 </Route>
                 <Route path="/">
-                  <h1>Home</h1>
+                  <AddTransactionForm categories={this.state.categories} />
                 </Route>
               </Switch>
     );
@@ -87,10 +87,10 @@ class App extends Component {
 
           <nav className="App-navbar">
             <div className="App-navbar-home App-navbar-item">
-              <Link className="App-navbar-link" to="/"><FaHome className="App-navbar-icon" /></Link>
+              <Link className="App-navbar-link" to="/"><FaPlus className="App-navbar-icon" /></Link>
             </div>
             <div className="App-navbar-add App-navbar-item">
-              <Link className="App-navbar-link" to="/add"><FaPlus className="App-navbar-icon" /></Link>
+              <Link className="App-navbar-link" to="/budget"><FaChartPie className="App-navbar-icon" /></Link>
             </div>
             <div className="App-navbar-list App-navbar-item">
               <Link className="App-navbar-link" to="/list"><FaList className="App-navbar-icon" /></Link>
