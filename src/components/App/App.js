@@ -8,6 +8,7 @@ import {
 import './App.css';
 import AddTransactionForm from '../AddTransactionForm/AddTransactionForm.js';
 import ConfigInfoForm from '../ConfigInfoForm/ConfigInfoForm.js';
+import SpendingView from '../SpendingView/SpendingView.js';
 import { FaPlus, FaCog, FaList, FaChartPie } from 'react-icons/fa';
 
 class App extends Component {
@@ -19,6 +20,8 @@ class App extends Component {
       initializingMessage: "Loading...",
       transactions: [],
       categories: [],
+      currentSpending: null,
+      spendingLimits: null,
       config: {
         clientId: this.loadFromConfigWithDefault('clientId', ""),
         apiKey: this.loadFromConfigWithDefault('apiKey', ""),
@@ -36,7 +39,7 @@ class App extends Component {
     var mainBody = (
               <Switch>
                 <Route path="/budget">
-                  <p>Feature coming soon...</p>
+                  <SpendingView currentSpending={this.state.currentSpending} spendingLimits={this.state.spendingLimits} />
                 </Route>
                 <Route path="/list">
                   <Transactions transactions={this.state.transactions} />
@@ -230,6 +233,8 @@ class App extends Component {
       if(currentComponent.state.isLoggedIn) {
         currentComponent.loadCategories();
         currentComponent.loadTransactions();
+        currentComponent.loadSpendingView();
+        currentComponent.loadSpendingLimits();
       }
     }, function(error) {
       currentComponent.handleError(error);
@@ -302,6 +307,46 @@ class App extends Component {
           };
         });
         this.setState({categories: categories});
+      })
+      .catch(error => {
+        this.handleError(error);
+      });
+    });
+  }
+
+  loadSpendingView = () => {
+    window.gapi.client.load("sheets", "v4", () => {
+      window.gapi.client.sheets.spreadsheets.values.get({
+        spreadsheetId: this.state.config.sheetId,
+        range: 'Current Month Budget',
+      })
+      .then(response => {
+        const values = response.result.values;
+        const currentSpending = {};
+        values.forEach((v) => {
+          currentSpending[v[0]] = v[1];
+        });
+        this.setState({currentSpending: currentSpending});
+      })
+      .catch(error => {
+        this.handleError(error);
+      });
+    });
+  }
+
+  loadSpendingLimits = () => {
+    window.gapi.client.load("sheets", "v4", () => {
+      window.gapi.client.sheets.spreadsheets.values.get({
+        spreadsheetId: this.state.config.sheetId,
+        range: 'Monthly Spending Limits',
+      })
+      .then(response => {
+        const values = response.result.values;
+        const spendingLimits = {};
+        values.forEach((v) => {
+          spendingLimits[v[0]] = v[1];
+        });
+        this.setState({spendingLimits: spendingLimits});
       })
       .catch(error => {
         this.handleError(error);

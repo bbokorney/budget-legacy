@@ -1,0 +1,52 @@
+.SpendingView-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-areas: "category amount limit";
+  border-bottom-style: solid;
+  border-bottom-color: #757575;
+  border-bottom-width: 1px;
+}
+
+.SpendingView-header {
+  font-weight: bold;
+}
+
+.SpendingView-number {
+  font-family: monospace;
+}
+
+.SpendingView-category {
+  grid-area: category;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.SpendingView-amount {
+  grid-area: amount;
+  display: grid;
+  align-items: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.SpendingView-limit {
+  grid-area: limit;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.SpendingView-not-number {
+  color: black;
+}
+
+.SpendingView-normal {
+  color: #6aa84f;
+}
+
+.SpendingView-warning {
+  color: #ef6c00;
+}
+
+.SpendingView-over {
+  color: #d60013;
+}
