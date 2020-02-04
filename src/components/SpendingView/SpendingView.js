@@ -53,6 +53,7 @@ function SpendingView(props) {
 }
 
 function makeRow(category, amount, limit, additionalClasses, numberRow) {
+  amount = amount ? amount : "0.00";
   const key = category ? category : amount;
   const amountNum = parseFloat(amount.replace(',', ''));
   const limitNum = parseFloat(limit.replace(',', ''));
