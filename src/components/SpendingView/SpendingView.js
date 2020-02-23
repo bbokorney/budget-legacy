@@ -6,12 +6,17 @@ const severityWarning = 'warning';
 const severityOver = 'over';
 
 function SpendingView(props) {
+  console.log(props);
   const currentSpending = props.currentSpending;
   const spendingLimits = props.spendingLimits;
+  const annualBudget = props.annualBudget;
   if(!currentSpending) {
     return <p>No data...</p>;
   }
   if(!spendingLimits) {
+    return <p>No data...</p>;
+  }
+  if(!annualBudget) {
     return <p>No data...</p>;
   }
   const otherTotal = calculateOtherTotal(currentSpending, spendingLimits);
@@ -42,12 +47,18 @@ function SpendingView(props) {
     unplannedRows.push(makeRow(key, currentSpending[key], limit, [], true));
   }
   return ( 
-    <div className="SpendingView-container">{
-      [headerRow,
-      plannedSpendingHeaderRow, totalRow, otherRow]
-      .concat(plannedRows)
-      .concat([unplannedSpendingHeaderRow]).concat(unplannedRows)
-    }
+    <div className="SpendingView-container">
+      <div>
+      {
+        [headerRow,
+        plannedSpendingHeaderRow, totalRow, otherRow]
+        .concat(plannedRows)
+        .concat([unplannedSpendingHeaderRow]).concat(unplannedRows)
+      }
+      </div>
+     <div>
+      {annualBudgetView(annualBudget)}
+      </div>
     </div>
   );
 }
@@ -95,6 +106,20 @@ function calculateOtherTotal(currentSpending, spendingLimits) {
     sum += parseFloat(currentSpending[key].replace(',', ''));
   }
   return sum.toFixed(2);
+}
+
+function annualBudgetView(annualLimits) {
+  console.log(annualLimits);
+  return (
+    <div>
+      <h3><b>Annual Budget</b></h3>
+      <p>This year we've spent {annualLimits["Total"]}</p>
+      <p>For a $30k budget, we can have {annualLimits["30k"]} of unplanned spending each month.</p>
+      <p>For a $35k budget, we can have {annualLimits["35k"]} of unplanned spending each month.</p>
+      <p>For a $40k budget, we can have {annualLimits["40k"]} of unplanned spending each month.</p>
+    </div>
+  );
+
 }
 
 export default SpendingView;

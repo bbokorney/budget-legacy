@@ -22,6 +22,7 @@ class App extends Component {
       categories: [],
       currentSpending: null,
       spendingLimits: null,
+      annualBudget: null,
       config: {
         clientId: this.loadFromConfigWithDefault('clientId', ""),
         apiKey: this.loadFromConfigWithDefault('apiKey', ""),
@@ -39,7 +40,8 @@ class App extends Component {
     var mainBody = (
               <Switch>
                 <Route path="/budget">
-                  <SpendingView currentSpending={this.state.currentSpending} spendingLimits={this.state.spendingLimits} />
+                  <SpendingView currentSpending={this.state.currentSpending} spendingLimits={this.state.spendingLimits}
+                    annualBudget={this.state.annualBudget} />
                 </Route>
                 <Route path="/list">
                   <Transactions transactions={this.state.transactions} />
@@ -235,6 +237,7 @@ class App extends Component {
         currentComponent.loadTransactions();
         currentComponent.loadSpendingView();
         currentComponent.loadSpendingLimits();
+        currentComponent.loadAnnualSpendingLimits();
       }
     }, function(error) {
       currentComponent.handleError(error);
@@ -347,6 +350,26 @@ class App extends Component {
           spendingLimits[v[0]] = v[1];
         });
         this.setState({spendingLimits: spendingLimits});
+      })
+      .catch(error => {
+        this.handleError(error);
+      });
+    });
+  }
+
+  loadAnnualSpendingLimits = () => {
+    window.gapi.client.load("sheets", "v4", () => {
+      window.gapi.client.sheets.spreadsheets.values.get({
+        spreadsheetId: this.state.config.sheetId,
+        range: 'Annual Budget',
+      })
+      .then(response => {
+        const values = response.result.values;
+        const annualBudget = {};
+        values.forEach((v) => {
+          annualBudget[v[0]] = v[1];
+        });
+        this.setState({annualBudget: annualBudget});
       })
       .catch(error => {
         this.handleError(error);
