@@ -10,7 +10,9 @@
     "react-icons": "^3.8.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",
-    "react-select": "^3.0.8"
+    "react-select": "^3.0.8",
+    "google-protobuf": "^3.7.1",
+    "grpc-web": "^1.0.4"
   },
   "scripts": {
     "start": "react-scripts start",

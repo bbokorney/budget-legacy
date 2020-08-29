@@ -5,6 +5,9 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Select from 'react-select'
 import CreatableSelect from 'react-select/creatable';
+import {TransactionsClient} from '../../client/transactions/transactions_grpc_web_pb.js';
+import {Transaction} from '../../client/transactions/transactions_pb.js';
+
 
 class AddTransactionForm extends Component {
   constructor(props) {
@@ -43,7 +46,18 @@ class AddTransactionForm extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    this.addTransaction();
+
+    var transactionsService = new TransactionsClient('http://localhost:50052');
+
+    var request = new Transaction();
+    request.setDate('08/09/2020');
+
+    transactionsService.addTransaction(request, {}, function(err, response) {
+      console.log(err);
+      console.log(response);
+    });
+
+    // this.addTransaction();
   }
 
   getFormattedDate(date) {
