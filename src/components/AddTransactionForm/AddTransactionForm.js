@@ -71,30 +71,29 @@ class AddTransactionForm extends Component {
 
     const request = currentComponent.createTransactionObject();
 
-    currentComponent.props.transactionsService.addTransaction(request, {}, function(err, response) {
-      if(err) {
+    currentComponent.props.transactionsService.addTransaction(request, {})
+      .then(response => {
+        currentComponent.setState({
+          addingTransaction: false,
+          transactionAdded: true,
+          date: new Date(),
+          amount: "",
+          floatAmount: 0,
+          category: "",
+          vendor: "",
+          error: "",
+          tags: [],
+        });
+      })
+      .catch(error => {
         console.log("Error adding transaction");
-        console.log(err);
+        console.log(error);
         currentComponent.setState({
           addingTransaction: false,
           transactionAdded: false,
-          error: JSON.stringify(err, null, 2),
+          error: JSON.stringify(error, null, 2),
         });
-        return;
-      }
-
-      currentComponent.setState({
-        addingTransaction: false,
-        transactionAdded: true,
-        date: new Date(),
-        amount: "",
-        floatAmount: 0,
-        category: "",
-        vendor: "",
-        error: "",
-        tags: [],
       });
-    });
   }
 
   createTransactionObject = () => {
