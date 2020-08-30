@@ -15,6 +15,8 @@
 const grpc = {};
 grpc.web = require('grpc-web');
 
+
+var google_protobuf_empty_pb = require('google-protobuf/google/protobuf/empty_pb.js')
 const proto = {};
 proto.transactions = require('./transactions_pb.js');
 
@@ -26,7 +28,7 @@ proto.transactions = require('./transactions_pb.js');
  * @struct
  * @final
  */
-proto.transactions.TransactionsClient =
+proto.transactions.TransactionsServiceClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
   options['format'] = 'text';
@@ -52,7 +54,7 @@ proto.transactions.TransactionsClient =
  * @struct
  * @final
  */
-proto.transactions.TransactionsPromiseClient =
+proto.transactions.TransactionsServicePromiseClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
   options['format'] = 'text';
@@ -74,13 +76,13 @@ proto.transactions.TransactionsPromiseClient =
  * @const
  * @type {!grpc.web.MethodDescriptor<
  *   !proto.transactions.Transaction,
- *   !proto.transactions.Reply>}
+ *   !proto.google.protobuf.Empty>}
  */
-const methodDescriptor_Transactions_AddTransaction = new grpc.web.MethodDescriptor(
-  '/transactions.Transactions/AddTransaction',
+const methodDescriptor_TransactionsService_AddTransaction = new grpc.web.MethodDescriptor(
+  '/transactions.TransactionsService/AddTransaction',
   grpc.web.MethodType.UNARY,
   proto.transactions.Transaction,
-  proto.transactions.Reply,
+  google_protobuf_empty_pb.Empty,
   /**
    * @param {!proto.transactions.Transaction} request
    * @return {!Uint8Array}
@@ -88,7 +90,7 @@ const methodDescriptor_Transactions_AddTransaction = new grpc.web.MethodDescript
   function(request) {
     return request.serializeBinary();
   },
-  proto.transactions.Reply.deserializeBinary
+  google_protobuf_empty_pb.Empty.deserializeBinary
 );
 
 
@@ -96,10 +98,10 @@ const methodDescriptor_Transactions_AddTransaction = new grpc.web.MethodDescript
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
  *   !proto.transactions.Transaction,
- *   !proto.transactions.Reply>}
+ *   !proto.google.protobuf.Empty>}
  */
-const methodInfo_Transactions_AddTransaction = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.transactions.Reply,
+const methodInfo_TransactionsService_AddTransaction = new grpc.web.AbstractClientBase.MethodInfo(
+  google_protobuf_empty_pb.Empty,
   /**
    * @param {!proto.transactions.Transaction} request
    * @return {!Uint8Array}
@@ -107,7 +109,7 @@ const methodInfo_Transactions_AddTransaction = new grpc.web.AbstractClientBase.M
   function(request) {
     return request.serializeBinary();
   },
-  proto.transactions.Reply.deserializeBinary
+  google_protobuf_empty_pb.Empty.deserializeBinary
 );
 
 
@@ -116,18 +118,18 @@ const methodInfo_Transactions_AddTransaction = new grpc.web.AbstractClientBase.M
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.Error, ?proto.transactions.Reply)}
+ * @param {function(?grpc.web.Error, ?proto.google.protobuf.Empty)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.transactions.Reply>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.google.protobuf.Empty>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.transactions.TransactionsClient.prototype.addTransaction =
+proto.transactions.TransactionsServiceClient.prototype.addTransaction =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/transactions.Transactions/AddTransaction',
+      '/transactions.TransactionsService/AddTransaction',
       request,
       metadata || {},
-      methodDescriptor_Transactions_AddTransaction,
+      methodDescriptor_TransactionsService_AddTransaction,
       callback);
 };
 
@@ -137,16 +139,16 @@ proto.transactions.TransactionsClient.prototype.addTransaction =
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.transactions.Reply>}
+ * @return {!Promise<!proto.google.protobuf.Empty>}
  *     Promise that resolves to the response
  */
-proto.transactions.TransactionsPromiseClient.prototype.addTransaction =
+proto.transactions.TransactionsServicePromiseClient.prototype.addTransaction =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/transactions.Transactions/AddTransaction',
+      '/transactions.TransactionsService/AddTransaction',
       request,
       metadata || {},
-      methodDescriptor_Transactions_AddTransaction);
+      methodDescriptor_TransactionsService_AddTransaction);
 };
 
 

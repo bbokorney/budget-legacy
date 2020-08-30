@@ -58,7 +58,10 @@ class App extends Component {
                   />
                 </Route>
                 <Route path="/">
-                  <AddTransactionForm categories={this.state.categories} />
+                  <AddTransactionForm
+                    categories={this.state.categories}
+                    transactionsService={this.props.transactionsService}
+                  />
                 </Route>
               </Switch>
     );

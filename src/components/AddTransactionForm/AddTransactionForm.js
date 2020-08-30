@@ -5,7 +5,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Select from 'react-select'
 import CreatableSelect from 'react-select/creatable';
-import {TransactionsClient} from '../../client/transactions/transactions_grpc_web_pb.js';
 import {Transaction} from '../../client/transactions/transactions_pb.js';
 
 
@@ -46,18 +45,7 @@ class AddTransactionForm extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-
-    var transactionsService = new TransactionsClient('http://localhost:50052');
-
-    var request = new Transaction();
-    request.setDate('08/09/2020');
-
-    transactionsService.addTransaction(request, {}, function(err, response) {
-      console.log(err);
-      console.log(response);
-    });
-
-    // this.addTransaction();
+    this.addTransaction();
   }
 
   getFormattedDate(date) {
@@ -71,54 +59,57 @@ class AddTransactionForm extends Component {
   addTransaction = () => {
     const currentComponent = this;
 
+    if (!currentComponent.inputValid()) {
+      return;
+    }
+
     currentComponent.setState({
       addingTransaction: true,
       transactionAdded: false,
       error: "",
     });
 
-    window.gapi.client.load("sheets", "v4", () => {
-      window.gapi.client.sheets.spreadsheets.values.append({
-        spreadsheetId :'1H89VCjaXRq5d4XT8J92N7eavaBIvIGSfP240VOMasRo',
-        range: 'Transactions',
-        valueInputOption: 'USER_ENTERED',
-        resource: currentComponent.formatTransactionRow(),
-      })
-      .then(response => {
-        console.log(response);
-        currentComponent.setState({
-          addingTransaction: false,
-          transactionAdded: true,
-          date: new Date(),
-          amount: "",
-          floatAmount: 0,
-          category: "",
-          vendor: "",
-          error: "",
-          tags: [],
-        });
-      })
-      .catch(error => {
-        console.log(error);
+    const request = currentComponent.createTransactionObject();
+
+    currentComponent.props.transactionsService.addTransaction(request, {}, function(err, response) {
+      if(err) {
+        console.log("Error adding transaction");
+        console.log(err);
         currentComponent.setState({
           addingTransaction: false,
           transactionAdded: false,
-          error: JSON.stringify(error, null, 2),
+          error: JSON.stringify(err, null, 2),
         });
+        return;
+      }
+
+      currentComponent.setState({
+        addingTransaction: false,
+        transactionAdded: true,
+        date: new Date(),
+        amount: "",
+        floatAmount: 0,
+        category: "",
+        vendor: "",
+        error: "",
+        tags: [],
       });
     });
   }
 
-  formatTransactionRow = () => {
-    var tags = [];
-    if (this.state.tags) {
-      tags = this.state.tags.map((t) => t.value);
-    }
-    var innerValues = [this.getFormattedDate(this.state.date), this.state.amount, this.state.category.value, this.state.vendor];
-    innerValues = innerValues.concat(tags);
-    return {
-      values: [innerValues],
-    };
+  createTransactionObject = () => {
+    return new Transaction()
+      .setDate(this.getFormattedDate(this.state.date))
+      .setAmount(this.state.floatAmount)
+      .setCategory(this.state.category.value)
+      .setVendor(this.state.vendor);
+  }
+
+  inputValid = () => {
+    return this.state.date !== "" &&
+      this.state.floatAmount > 0 &&
+      this.state.category.value !== "" &&
+      this.state.vendor !== "";
   }
 
   transformCategories = (categories) => {
