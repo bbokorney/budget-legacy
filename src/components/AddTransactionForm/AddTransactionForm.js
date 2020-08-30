@@ -5,7 +5,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Select from 'react-select'
 import CreatableSelect from 'react-select/creatable';
-import {Transaction} from '../../client/transactions/transactions_pb.js';
+import {Transaction} from '../../client/budget/budget_pb.js';
 
 
 class AddTransactionForm extends Component {
@@ -71,7 +71,7 @@ class AddTransactionForm extends Component {
 
     const request = currentComponent.createTransactionObject();
 
-    currentComponent.props.transactionsService.addTransaction(request, {})
+    currentComponent.props.budgetService.addTransaction(request, {})
       .then(response => {
         currentComponent.setState({
           addingTransaction: false,
