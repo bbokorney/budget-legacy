@@ -6,6 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import Select from 'react-select'
 import CreatableSelect from 'react-select/creatable';
 import {Transaction} from '../../client/budget/budget_pb.js';
+import {Empty} from 'google-protobuf/google/protobuf/empty_pb.js'
 
 
 class AddTransactionForm extends Component {
@@ -16,11 +17,36 @@ class AddTransactionForm extends Component {
       amount: "",
       floatAmount: 0,
       category: null,
+      categories: [],
       vendor: "",
       addingTransaction: false,
       transactionAdded: false,
       error: "",
     };
+
+    this.loadCategories();
+  }
+
+  loadCategories = () => {
+    const currentComponent = this;
+
+    currentComponent.props.budgetService.listCategories(new Empty(), {})
+      .then(response => {
+        const categories = response.getCategoriesList()
+          .map((c) => {
+            return {
+              label: c,
+              value: c,
+            };
+          });
+        currentComponent.setState({
+          categories: categories,
+        });
+      })
+      .catch(error => {
+        console.log("Error listing categories");
+        console.log(error);
+      });
   }
 
   handleAmountChange = (event, maskedValue, floatValue) => {
@@ -111,19 +137,6 @@ class AddTransactionForm extends Component {
       this.state.vendor !== "";
   }
 
-  transformCategories = (categories) => {
-    return categories
-      .sort((x, y) => {
-        return y.count - x.count;
-      })
-      .map((c) => {
-        return {
-          label: c.name,
-          value: c.name,
-        };
-    });
-  }
-
   render() {
     // Fix autofocus issues with CurrencyInput
     // on iOS it will still auto focus even if autoFocus=false
@@ -184,7 +197,7 @@ class AddTransactionForm extends Component {
           <Select
             className="AddTransactionForm-input AddTransactionForm-category"
             classNamePrefix="Categories"
-            options={this.transformCategories(this.props.categories)}
+            options={this.state.categories}
             onChange={this.handleCategoryChange}
             isSearchable={false}
             disabled={disableSubmit}

@@ -19,7 +19,6 @@ class App extends Component {
       isLoggedIn: false,
       initializingMessage: "Loading...",
       transactions: [],
-      categories: [],
       currentSpending: null,
       spendingLimits: null,
       annualBudget: null,
@@ -59,7 +58,6 @@ class App extends Component {
                 </Route>
                 <Route path="/">
                   <AddTransactionForm
-                    categories={this.state.categories}
                     budgetService={this.props.budgetService}
                   />
                 </Route>
@@ -236,7 +234,6 @@ class App extends Component {
       // Handle the initial sign-in state.
       currentComponent.updateSigninStatus(window.gapi.auth2.getAuthInstance().isSignedIn.get());
       if(currentComponent.state.isLoggedIn) {
-        currentComponent.loadCategories();
         currentComponent.loadTransactions();
         currentComponent.loadSpendingView();
         currentComponent.loadSpendingLimits();
@@ -295,28 +292,6 @@ class App extends Component {
         category: v[2],
         vendor: v[3],
       };
-    });
-  }
-
-  loadCategories = () => {
-    window.gapi.client.load("sheets", "v4", () => {
-      window.gapi.client.sheets.spreadsheets.values.get({
-        spreadsheetId: this.state.config.sheetId,
-        range: 'Categories!A1:B',
-      })
-      .then(response => {
-        const values = response.result.values;
-        const categories = values.map((v) => {
-          return {
-            name: v[0],
-            count: v[1],
-          };
-        });
-        this.setState({categories: categories});
-      })
-      .catch(error => {
-        this.handleError(error);
-      });
     });
   }
 

@@ -232,5 +232,85 @@ proto.budget.BudgetServicePromiseClient.prototype.listCategories =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.budget.AddCategoryRequest,
+ *   !proto.google.protobuf.Empty>}
+ */
+const methodDescriptor_BudgetService_AddCategory = new grpc.web.MethodDescriptor(
+  '/budget.BudgetService/AddCategory',
+  grpc.web.MethodType.UNARY,
+  proto.budget.AddCategoryRequest,
+  google_protobuf_empty_pb.Empty,
+  /**
+   * @param {!proto.budget.AddCategoryRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  google_protobuf_empty_pb.Empty.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.budget.AddCategoryRequest,
+ *   !proto.google.protobuf.Empty>}
+ */
+const methodInfo_BudgetService_AddCategory = new grpc.web.AbstractClientBase.MethodInfo(
+  google_protobuf_empty_pb.Empty,
+  /**
+   * @param {!proto.budget.AddCategoryRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  google_protobuf_empty_pb.Empty.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.budget.AddCategoryRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.google.protobuf.Empty)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.google.protobuf.Empty>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.budget.BudgetServiceClient.prototype.addCategory =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/budget.BudgetService/AddCategory',
+      request,
+      metadata || {},
+      methodDescriptor_BudgetService_AddCategory,
+      callback);
+};
+
+
+/**
+ * @param {!proto.budget.AddCategoryRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.google.protobuf.Empty>}
+ *     Promise that resolves to the response
+ */
+proto.budget.BudgetServicePromiseClient.prototype.addCategory =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/budget.BudgetService/AddCategory',
+      request,
+      metadata || {},
+      methodDescriptor_BudgetService_AddCategory);
+};
+
+
 module.exports = proto.budget;
 
