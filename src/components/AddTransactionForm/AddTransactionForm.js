@@ -71,14 +71,6 @@ class AddTransactionForm extends Component {
     this.addTransaction();
   };
 
-  getFormattedDate(date) {
-    let year = date.getFullYear();
-    let month = (1 + date.getMonth()).toString().padStart(2, "0");
-    let day = date.getDate().toString().padStart(2, "0");
-
-    return month + "/" + day + "/" + year;
-  }
-
   addTransaction = () => {
     const currentComponent = this;
 
@@ -122,7 +114,7 @@ class AddTransactionForm extends Component {
 
   createTransactionObject = () => {
     return {
-      date: this.getFormattedDate(this.state.date),
+      date: this.state.date,
       amount: this.state.floatAmount,
       category: this.state.category.value,
       vendor: this.state.vendor,
