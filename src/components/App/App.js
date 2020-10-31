@@ -306,21 +306,16 @@ class App extends Component {
   };
 
   loadTransactions = () => {
-    window.gapi.client.load("sheets", "v4", () => {
-      window.gapi.client.sheets.spreadsheets.values
-        .get({
-          spreadsheetId: this.state.config.sheetId,
-          range: "Current Month Transactions",
-        })
-        .then((response) => {
-          this.setState({
-            transactions: this.transformTransactionResults(response),
-          });
-        })
-        .catch((error) => {
-          this.handleError(error);
+    this.props.budgetClient
+      .listTransactions()
+      .then((transactions) => {
+        this.setState({
+          transactions: transactions,
         });
-    });
+      })
+      .catch((error) => {
+        this.handleError(error);
+      });
   };
 
   transformTransactionResults = (response) => {

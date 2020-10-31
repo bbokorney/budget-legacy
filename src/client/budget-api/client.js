@@ -15,6 +15,12 @@ class BudgetClient {
     });
   };
 
+  listTransactions = () => {
+    return this.httpClient.get("transactions").then((result) => {
+      return result.data;
+    });
+  };
+
   addTransaction = (transaction) => {
     const body = JSON.stringify(transaction);
     return this.httpClient.post("transactions", body).then((result) => {

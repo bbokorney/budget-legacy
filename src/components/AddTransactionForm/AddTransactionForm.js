@@ -32,8 +32,8 @@ class AddTransactionForm extends Component {
       .then((response) => {
         const categories = response.map((c) => {
           return {
-            label: c,
-            value: c,
+            label: c.name,
+            value: c.name,
           };
         });
         currentComponent.setState({

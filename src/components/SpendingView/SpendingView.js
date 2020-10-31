@@ -6,7 +6,6 @@ const severityWarning = "warning";
 const severityOver = "over";
 
 function SpendingView(props) {
-  console.log(props);
   const currentSpending = props.currentSpending;
   const spendingLimits = props.spendingLimits;
   const annualBudget = props.annualBudget;
