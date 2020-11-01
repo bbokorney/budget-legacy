@@ -95,7 +95,7 @@ function makeRow(category, amount, limit, additionalClasses, numberRow) {
   amount = amount ? amount : 0.0;
   const key = category ? category : amount;
   const amountNum = amount;
-  const limitNum = parseFloat(limit.replace(",", ""));
+  const limitNum = limit;
   const amountPrefix = numberRow ? "$" : "";
   const limitPrefix = numberRow && limit ? "$" : "";
   const severity =

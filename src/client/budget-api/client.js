@@ -35,6 +35,12 @@ class BudgetClient {
       return result.data;
     });
   };
+
+  getCategoryLimits = () => {
+    return this.httpClient.get("category-limits").then((result) => {
+      return result.data;
+    });
+  };
 }
 
 export default BudgetClient;
