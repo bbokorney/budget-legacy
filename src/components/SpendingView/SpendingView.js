@@ -18,6 +18,9 @@ function SpendingView(props) {
   if (!annualBudget) {
     return <p>No data...</p>;
   }
+  console.log(currentSpending);
+  console.log(spendingLimits);
+  console.log(annualBudget);
   const otherTotal = calculateOtherTotal(currentSpending, spendingLimits);
 
   const headerRow = makeRow(
@@ -89,9 +92,9 @@ function SpendingView(props) {
 }
 
 function makeRow(category, amount, limit, additionalClasses, numberRow) {
-  amount = amount ? amount : "0.00";
+  amount = amount ? amount : 0.0;
   const key = category ? category : amount;
-  const amountNum = parseFloat(amount.replace(",", ""));
+  const amountNum = amount;
   const limitNum = parseFloat(limit.replace(",", ""));
   const amountPrefix = numberRow ? "$" : "";
   const limitPrefix = numberRow && limit ? "$" : "";
@@ -104,6 +107,8 @@ function makeRow(category, amount, limit, additionalClasses, numberRow) {
     severityClass(severity),
   ];
   const limitClasses = [isNaN(limitNum) ? "" : "SpendingView-number"];
+  const amountFormatted =
+    amountPrefix + (Number.isFinite(amountNum) ? amountNum.toFixed(2) : amount);
   return (
     <div key={key} className="SpendingView-row">
       <label
@@ -119,7 +124,7 @@ function makeRow(category, amount, limit, additionalClasses, numberRow) {
           .concat(amountClasses)
           .join(" ")}
       >
-        {amountPrefix + amount}
+        {amountFormatted}
       </label>
       <label
         className={["SpendingView-limit"]
@@ -154,19 +159,18 @@ function calculateOtherTotal(currentSpending, spendingLimits) {
     if (spendingLimits[key]) {
       continue;
     }
-    sum += parseFloat(currentSpending[key].replace(",", ""));
+    sum += currentSpending[key];
   }
   return sum.toFixed(2);
 }
 
 function annualBudgetView(annualLimits) {
-  console.log(annualLimits);
   return (
     <div>
       <h3>
         <b>Annual Budget</b>
       </h3>
-      <p>This year we&aposve spent {annualLimits["Total"]}</p>
+      <p>This year we have spent {annualLimits["Total"]}</p>
       <p>
         For a $30k budget, we can have {annualLimits["30k"]} of unplanned
         spending each month.

@@ -29,6 +29,12 @@ class BudgetClient {
       return result;
     });
   };
+
+  getCurrentSpending = () => {
+    return this.httpClient.get("spending").then((result) => {
+      return result.data;
+    });
+  };
 }
 
 export default BudgetClient;

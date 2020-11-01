@@ -331,24 +331,16 @@ class App extends Component {
   };
 
   loadSpendingView = () => {
-    window.gapi.client.load("sheets", "v4", () => {
-      window.gapi.client.sheets.spreadsheets.values
-        .get({
-          spreadsheetId: this.state.config.sheetId,
-          range: "Current Month Budget",
-        })
-        .then((response) => {
-          const values = response.result.values;
-          const currentSpending = {};
-          values.forEach((v) => {
-            currentSpending[v[0]] = v[1];
-          });
-          this.setState({ currentSpending: currentSpending });
-        })
-        .catch((error) => {
-          this.handleError(error);
+    this.props.budgetClient
+      .getCurrentSpending()
+      .then((currentSpending) => {
+        this.setState({
+          currentSpending: currentSpending,
         });
-    });
+      })
+      .catch((error) => {
+        this.handleError(error);
+      });
   };
 
   loadSpendingLimits = () => {
