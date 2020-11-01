@@ -41,6 +41,12 @@ class BudgetClient {
       return result.data;
     });
   };
+
+  getAnnualLimits = () => {
+    return this.httpClient.get("annual-limits").then((result) => {
+      return result.data;
+    });
+  };
 }
 
 export default BudgetClient;

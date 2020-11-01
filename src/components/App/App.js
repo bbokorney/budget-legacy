@@ -357,24 +357,16 @@ class App extends Component {
   };
 
   loadAnnualSpendingLimits = () => {
-    window.gapi.client.load("sheets", "v4", () => {
-      window.gapi.client.sheets.spreadsheets.values
-        .get({
-          spreadsheetId: this.state.config.sheetId,
-          range: "Annual Budget",
-        })
-        .then((response) => {
-          const values = response.result.values;
-          const annualBudget = {};
-          values.forEach((v) => {
-            annualBudget[v[0]] = v[1];
-          });
-          this.setState({ annualBudget: annualBudget });
-        })
-        .catch((error) => {
-          this.handleError(error);
+    this.props.budgetClient
+      .getAnnualLimits()
+      .then((annualBudget) => {
+        this.setState({
+          annualBudget: annualBudget,
         });
-    });
+      })
+      .catch((error) => {
+        this.handleError(error);
+      });
   };
 }
 

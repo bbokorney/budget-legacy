@@ -109,6 +109,8 @@ function makeRow(category, amount, limit, additionalClasses, numberRow) {
   const limitClasses = [isNaN(limitNum) ? "" : "SpendingView-number"];
   const amountFormatted =
     amountPrefix + (Number.isFinite(amountNum) ? amountNum.toFixed(2) : amount);
+  const limitFormatted =
+    limitPrefix + (Number.isFinite(limitNum) ? limitNum.toFixed(2) : limit);
   return (
     <div key={key} className="SpendingView-row">
       <label
@@ -132,7 +134,7 @@ function makeRow(category, amount, limit, additionalClasses, numberRow) {
           .concat(limitClasses)
           .join(" ")}
       >
-        {limitPrefix + limit}
+        {limitFormatted}
       </label>
     </div>
   );
@@ -170,18 +172,18 @@ function annualBudgetView(annualLimits) {
       <h3>
         <b>Annual Budget</b>
       </h3>
-      <p>This year we have spent {annualLimits["Total"]}</p>
+      <p>This year we have spent {"$" + annualLimits["Total"].toFixed(2)}</p>
       <p>
-        For a $30k budget, we can have {annualLimits["30k"]} of unplanned
-        spending each month.
+        For a $30k budget, we can have {"$" + annualLimits["30k"].toFixed(2)} of
+        unplanned spending each month.
       </p>
       <p>
-        For a $35k budget, we can have {annualLimits["35k"]} of unplanned
-        spending each month.
+        For a $35k budget, we can have {"$" + annualLimits["35k"].toFixed(2)} of
+        unplanned spending each month.
       </p>
       <p>
-        For a $40k budget, we can have {annualLimits["40k"]} of unplanned
-        spending each month.
+        For a $40k budget, we can have {"$" + annualLimits["40k"].toFixed(2)} of
+        unplanned spending each month.
       </p>
     </div>
   );
