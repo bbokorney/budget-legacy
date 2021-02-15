@@ -5,6 +5,7 @@ import AddTransactionForm from "../AddTransactionForm/AddTransactionForm.js";
 import ConfigInfoForm from "../ConfigInfoForm/ConfigInfoForm.js";
 import SpendingView from "../SpendingView/SpendingView.js";
 import { FaPlus, FaCog, FaList, FaChartPie } from "react-icons/fa";
+import { FormatDollarAmount } from "../../utils/formatting.js";
 
 class App extends Component {
   constructor(props) {
@@ -60,18 +61,18 @@ class App extends Component {
       </Switch>
     );
 
-    if (!this.state.isLoggedIn) {
-      mainBody = (
-        <div>
-          <p>Please log in</p>
-          <button onClick={this.handleLoginClick}> Login </button>
-        </div>
-      );
-    }
+    // if (!this.state.isLoggedIn) {
+    //   mainBody = (
+    //     <div>
+    //       <p>Please log in</p>
+    //       <button onClick={this.handleLoginClick}> Login </button>
+    //     </div>
+    //   );
+    // }
 
-    if (this.state.initializingMessage) {
-      mainBody = <p>{this.state.initializingMessage}</p>;
-    }
+    // if (this.state.initializingMessage) {
+    //   mainBody = <p>{this.state.initializingMessage}</p>;
+    // }
 
     return (
       <Router>
@@ -121,7 +122,16 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.setupAPIClient(null);
+    this.loadData();
+    this.loadTransactions();
+    this.loadSpendingView();
+    this.loadSpendingLimits();
+    this.loadAnnualSpendingLimits();
+    // this.setupAPIClient(null);
+  }
+
+  loadData() {
+
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -364,7 +374,7 @@ function Transactions(props) {
     .map((t, i) => (
       <li key={i} className="Transactions-list">
         <b className="Transactions-list-item Transactions-list-amount">
-          {t.amount}
+          {FormatDollarAmount(t.amount)}
         </b>
         <span className="Transactions-list-item Transactions-list-date">
           {prettyDate(t.date)}

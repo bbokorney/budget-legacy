@@ -1,5 +1,6 @@
 import "./SpendingView.css";
 import React from "react";
+import { FormatDollarAmount } from "../../utils/formatting.js";
 const severityNotNumber = "not-number";
 const severityNormal = "normal";
 const severityWarning = "warning";
@@ -25,21 +26,18 @@ function SpendingView(props) {
     "Amount",
     "Limit",
     ["SpendingView-header"],
-    false
   );
   const plannedSpendingHeaderRow = makeRow(
     "",
     "Planned Spending",
     "",
     ["SpendingView-header"],
-    false
   );
   const unplannedSpendingHeaderRow = makeRow(
     "",
     "Unplanned Spending",
     "",
     ["SpendingView-header"],
-    false
   );
 
   const totalRow = makeRow(
@@ -47,14 +45,12 @@ function SpendingView(props) {
     currentSpending["Total"],
     spendingLimits["Total"],
     ["SpendingView-header"],
-    true
   );
   const otherRow = makeRow(
     "Unplanned",
-    otherTotal + "",
+    otherTotal,
     spendingLimits["Other"],
     [],
-    true
   );
   var plannedRows = [];
   for (const key in spendingLimits) {
@@ -65,7 +61,7 @@ function SpendingView(props) {
       continue;
     }
     const limit = spendingLimits[key] ? spendingLimits[key] : "";
-    plannedRows.push(makeRow(key, currentSpending[key], limit, [], true));
+    plannedRows.push(makeRow(key, currentSpending[key], limit, []));
   }
   var unplannedRows = [];
   for (const key in currentSpending) {
@@ -73,7 +69,7 @@ function SpendingView(props) {
       continue;
     }
     const limit = spendingLimits[key] ? spendingLimits[key] : "";
-    unplannedRows.push(makeRow(key, currentSpending[key], limit, [], true));
+    unplannedRows.push(makeRow(key, currentSpending[key], limit, []));
   }
   return (
     <div className="SpendingView-container">
@@ -88,27 +84,26 @@ function SpendingView(props) {
   );
 }
 
-function makeRow(category, amount, limit, additionalClasses, numberRow) {
+function makeRow(category, amount, limit, additionalClasses) {
   amount = amount ? amount : 0.0;
   const key = category ? category : amount;
   const amountNum = amount;
   const limitNum = limit;
-  const amountPrefix = numberRow ? "$" : "";
-  const limitPrefix = numberRow && limit ? "$" : "";
   const severity =
     isNaN(amountNum) || isNaN(limitNum)
       ? severityNotNumber
       : calculateSeverity(amountNum, limitNum);
-  const amountClasses = [
+  var amountClasses = [
     isNaN(amountNum) ? "" : "SpendingView-number",
-    severityClass(severity),
   ];
+  if(limit !== "") {
+    amountClasses.push(severityClass(severity))
+  }
   const limitClasses = [isNaN(limitNum) ? "" : "SpendingView-number"];
   const amountFormatted =
-    amountPrefix +
-    (Number.isFinite(amountNum) ? formatDollarAmount(amountNum) : amount);
+    (Number.isFinite(amountNum) ? FormatDollarAmount(amountNum) : amount);
   const limitFormatted =
-    limitPrefix + (Number.isFinite(limitNum) ? limitNum.toFixed(2) : limit);
+    (Number.isFinite(limitNum) ? FormatDollarAmount(limitNum) : limit);
   return (
     <div key={key} className="SpendingView-row">
       <label
@@ -161,7 +156,7 @@ function calculateOtherTotal(currentSpending, spendingLimits) {
     }
     sum += currentSpending[key];
   }
-  return sum.toFixed(2);
+  return sum;
 }
 
 function annualBudgetView(annualLimits) {
@@ -179,27 +174,17 @@ function annualBudgetView(annualLimits) {
       </h3>
       <p>
         This year we have spent
-        {` ${formatDollarAmount(annualLimits["Total"])}.`}
+        {` ${FormatDollarAmount(annualLimits["Total"])}.`}
       </p>
         {amounts.map(amount => (
         <p key={amount}>
           For a ${amount} budget, we can have
-          {` ${formatDollarAmount(annualLimits[amount])} `}
+          {` ${FormatDollarAmount(annualLimits[amount])} `}
           of unplanned spending each month.
         </p>
       ))}
     </div>
   );
-}
-
-function formatDollarAmount(amount) {
-  var amountStr = amount.toFixed(2).toLocaleString("en");
-  var prefix = "";
-  if (amount < 0) {
-    amountStr = amountStr.substring(1, amountStr.length);
-    prefix = "-";
-  }
-  return `${prefix}$${amountStr}`;
 }
 
 export default SpendingView;
