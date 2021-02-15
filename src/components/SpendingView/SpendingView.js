@@ -18,9 +18,6 @@ function SpendingView(props) {
   if (!annualBudget) {
     return <p>No data...</p>;
   }
-  console.log(currentSpending);
-  console.log(spendingLimits);
-  console.log(annualBudget);
   const otherTotal = calculateOtherTotal(currentSpending, spendingLimits);
 
   const headerRow = makeRow(
@@ -108,7 +105,8 @@ function makeRow(category, amount, limit, additionalClasses, numberRow) {
   ];
   const limitClasses = [isNaN(limitNum) ? "" : "SpendingView-number"];
   const amountFormatted =
-    amountPrefix + (Number.isFinite(amountNum) ? amountNum.toFixed(2) : amount);
+    amountPrefix +
+    (Number.isFinite(amountNum) ? formatDollarAmount(amountNum) : amount);
   const limitFormatted =
     limitPrefix + (Number.isFinite(limitNum) ? limitNum.toFixed(2) : limit);
   return (
@@ -167,26 +165,41 @@ function calculateOtherTotal(currentSpending, spendingLimits) {
 }
 
 function annualBudgetView(annualLimits) {
+  var amounts = [];
+  for(var limit in annualLimits) {
+    if(limit != "Total") {
+      amounts.push(limit);
+    }
+  }
+  amounts.sort();
   return (
     <div>
       <h3>
         <b>Annual Budget</b>
       </h3>
-      <p>This year we have spent {"$" + annualLimits["Total"].toFixed(2)}</p>
       <p>
-        For a $30k budget, we can have {"$" + annualLimits["30k"].toFixed(2)} of
-        unplanned spending each month.
+        This year we have spent
+        {` ${formatDollarAmount(annualLimits["Total"])}.`}
       </p>
-      <p>
-        For a $35k budget, we can have {"$" + annualLimits["35k"].toFixed(2)} of
-        unplanned spending each month.
-      </p>
-      <p>
-        For a $40k budget, we can have {"$" + annualLimits["40k"].toFixed(2)} of
-        unplanned spending each month.
-      </p>
+        {amounts.map(amount => (
+        <p key={amount}>
+          For a ${amount} budget, we can have
+          {` ${formatDollarAmount(annualLimits[amount])} `}
+          of unplanned spending each month.
+        </p>
+      ))}
     </div>
   );
+}
+
+function formatDollarAmount(amount) {
+  var amountStr = amount.toFixed(2).toLocaleString("en");
+  var prefix = "";
+  if (amount < 0) {
+    amountStr = amountStr.substring(1, amountStr.length);
+    prefix = "-";
+  }
+  return `${prefix}$${amountStr}`;
 }
 
 export default SpendingView;

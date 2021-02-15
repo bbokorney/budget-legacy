@@ -318,18 +318,6 @@ class App extends Component {
       });
   };
 
-  transformTransactionResults = (response) => {
-    const values = response.result.values;
-    return values.slice(0, values.length).map((v) => {
-      return {
-        date: v[0],
-        amount: v[1],
-        category: v[2],
-        vendor: v[3],
-      };
-    });
-  };
-
   loadSpendingView = () => {
     this.props.budgetClient
       .getCurrentSpending()

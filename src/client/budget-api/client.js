@@ -6,6 +6,7 @@ class BudgetClient {
     this.httpClient = axios.create({
       baseURL: `${url}/v1`,
       timeout: 10000,
+      headers: { "X-Auth-Token": "foobar" },
     });
   }
 
