@@ -12,7 +12,6 @@ class App extends Component {
   constructor(props) {
     super(props);
     const token = this.loadFromConfigWithDefault("token", null)
-    const isLoggedIn = token ? true : false
     var initializingMessage = "Loading..."
     if(!token) {
       initializingMessage = "App not set up. Please use set up link."
@@ -24,7 +23,6 @@ class App extends Component {
     this.state = {
       token: token,
       errorMessage: "",
-      isLoggedIn: isLoggedIn,
       initializingMessage: initializingMessage,
       transactions: [],
       currentSpending: null,
@@ -65,7 +63,6 @@ class App extends Component {
             clearConfig={this.clearConfig}
             onSubmit={this.handleConfigInfoSubmit}
             config={this.state.config}
-            isLoggedIn={this.state.isLoggedIn}
             handleLoginClick={this.handleLoginClick}
             handleLogoutClick={this.handleLogoutClick}
             version={this.props.version}
@@ -168,181 +165,12 @@ class App extends Component {
     this.loadAnnualSpendingLimits();
   }
 
-  setupAPIClient(prevConfig) {
-    this.checkAPIConfigParams();
-
-    if (!this.configChanged(prevConfig, this.state.config)) {
-      return;
-    }
-
-    if (!this.allConfigSet(this.state.config)) {
-      this.setState({
-        initializingMessage: "App not set up. Please use set up link.",
-      });
-      return;
-    }
-
-    window.gapi.load("client:auth2", this.initClient);
-  }
-
-  checkAPIConfigParams = () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const clientId = urlParams.get("clientId");
-    const apiKey = urlParams.get("apiKey");
-    const sheetId = urlParams.get("sheetId");
-    if (clientId && apiKey && sheetId) {
-      this.saveAPIConfigToLocalStorage({
-        clientId: clientId,
-        apiKey: apiKey,
-        sheetId: sheetId,
-      });
-
-      // redirect to URL without the API info as query params
-      const url = new URL(window.location.href);
-      window.location.href = url.protocol + "//" + url.host;
-      return;
-    }
-    return;
-  };
-
-  saveAPIConfigToLocalStorage = (config) => {
-    localStorage.setItem("clientId", config.clientId);
-    localStorage.setItem("apiKey", config.apiKey);
-    localStorage.setItem("sheetId", config.sheetId);
-  };
-
-  handleConfigInfoSubmit = (config) => {
-    this.saveAPIConfigToLocalStorage(config);
-    this.setState({ config: config });
-  };
-
-  clearConfig = () => {
-    localStorage.removeItem("clientId");
-    localStorage.removeItem("apiKey");
-    localStorage.removeItem("sheetId");
-    this.setState({
-      config: {
-        clientId: "",
-        apiKey: "",
-        sheetId: "",
-      },
-    });
-  };
-
-  allConfigSet = (config) => {
-    return (
-      config.clientId &&
-      config.apiKey &&
-      config.sheetId &&
-      config.clientId !== "null" &&
-      config.apiKey !== "null" &&
-      config.sheeetId !== "null" &&
-      config.clientId !== "undefined" &&
-      config.apiKey !== "undefined" &&
-      config.sheeetId !== "undefined"
-    );
-  };
-
-  configChanged = (prevConfig, currConfig) => {
-    if (!prevConfig && currConfig) {
-      return true;
-    }
-    if (prevConfig && !currConfig) {
-      return true;
-    }
-    return (
-      prevConfig.clientId !== currConfig.clientId ||
-      prevConfig.apiKey !== currConfig.apiKey ||
-      prevConfig.sheetId !== currConfig.sheetId
-    );
-  };
-
-  handleLoginClick = () => {
-    let currentComponent = this;
-    window.gapi.auth2
-      .getAuthInstance()
-      .signIn()
-      .then(function () {
-        currentComponent.initClient();
-      })
-      .catch((error) => {
-        this.handleError(error);
-      });
-  };
-
-  handleLogoutClick = () => {
-    window.gapi.auth2.getAuthInstance().signOut();
-    this.setState({ isLoggedIn: false });
-  };
-
-  initClient = () => {
-    // Client ID and API key from the Developer Console
-    const config = this.state.config;
-
-    // Array of API discovery doc URLs for APIs used by the quickstart
-    var DISCOVERY_DOCS = [
-      "https://sheets.googleapis.com/$discovery/rest?version=v4",
-    ];
-
-    // Authorization scopes required by the API; multiple scopes can be
-    // included, separated by spaces.
-    var SCOPES = "https://www.googleapis.com/auth/spreadsheets";
-
-    let currentComponent = this;
-
-    window.gapi.client
-      .init({
-        apiKey: config.apiKey,
-        clientId: config.clientId,
-        discoveryDocs: DISCOVERY_DOCS,
-        scope: SCOPES,
-      })
-      .then(
-        function () {
-          // Listen for sign-in state changes.
-          window.gapi.auth2
-            .getAuthInstance()
-            .isSignedIn.listen(currentComponent.updateSigninStatus);
-
-          // Handle the initial sign-in state.
-          currentComponent.updateSigninStatus(
-            window.gapi.auth2.getAuthInstance().isSignedIn.get()
-          );
-          if (currentComponent.state.isLoggedIn) {
-            currentComponent.loadTransactions();
-            currentComponent.loadSpendingView();
-            currentComponent.loadSpendingLimits();
-            currentComponent.loadAnnualSpendingLimits();
-          }
-        },
-        function (error) {
-          currentComponent.handleError(error);
-        }
-      );
-  };
-
   handleError = (error) => {
     console.log(error);
     const errMsg = JSON.stringify(error, null, 2);
     this.setState({
       errorMessage: errMsg,
     });
-  };
-
-  updateSigninStatus = (isSignedIn) => {
-    if (isSignedIn) {
-      this.setState({
-        isLoggedIn: true,
-        errorMessage: "",
-        initializingMessage: "",
-      });
-    } else {
-      this.setState({
-        isLoggedIn: false,
-        errorMessage: "",
-        initializingMessage: "",
-      });
-    }
   };
 
   loadTransactions = () => {
