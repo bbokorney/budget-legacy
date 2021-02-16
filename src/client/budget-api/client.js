@@ -1,12 +1,12 @@
 import axios from "axios";
 
 class BudgetClient {
-  constructor(url) {
+  constructor(url, token) {
     this.url = url;
     this.httpClient = axios.create({
       baseURL: `${url}/v1`,
       timeout: 10000,
-      headers: { "X-Auth-Token": "foobar" },
+      headers: { "X-Auth-Token": token },
     });
   }
 

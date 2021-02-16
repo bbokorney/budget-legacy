@@ -6,18 +6,31 @@ import ConfigInfoForm from "../ConfigInfoForm/ConfigInfoForm.js";
 import SpendingView from "../SpendingView/SpendingView.js";
 import { FaPlus, FaCog, FaList, FaChartPie } from "react-icons/fa";
 import { FormatDollarAmount } from "../../utils/formatting.js";
+import BudgetClient from "../../client/budget-api/client.js";
 
 class App extends Component {
   constructor(props) {
     super(props);
+    const token = this.loadFromConfigWithDefault("token", null)
+    const isLoggedIn = token ? true : false
+    var initializingMessage = "Loading..."
+    if(!token) {
+      initializingMessage = "App not set up. Please use set up link."
+    }
+    var budgetClient = null;
+    if(token) {
+      budgetClient =  new BudgetClient(this.props.budgetAPIUrl, token);
+    }
     this.state = {
+      token: token,
       errorMessage: "",
-      isLoggedIn: false,
-      initializingMessage: "Loading...",
+      isLoggedIn: isLoggedIn,
+      initializingMessage: initializingMessage,
       transactions: [],
       currentSpending: null,
       spendingLimits: null,
       annualBudget: null,
+      budgetClient: budgetClient,
       config: {
         clientId: this.loadFromConfigWithDefault("clientId", ""),
         apiKey: this.loadFromConfigWithDefault("apiKey", ""),
@@ -27,7 +40,10 @@ class App extends Component {
   }
 
   loadFromConfigWithDefault(key, defaultValue) {
-    const fromStorage = localStorage.getItem(key);
+    var fromStorage = localStorage.getItem(key);
+    if(fromStorage == "null") {
+      fromStorage = null;
+    }
     return fromStorage ? fromStorage : defaultValue;
   }
 
@@ -56,23 +72,14 @@ class App extends Component {
           />
         </Route>
         <Route path="/">
-          <AddTransactionForm budgetClient={this.props.budgetClient} />
+          <AddTransactionForm budgetClient={this.state.budgetClient} />
         </Route>
       </Switch>
     );
 
-    // if (!this.state.isLoggedIn) {
-    //   mainBody = (
-    //     <div>
-    //       <p>Please log in</p>
-    //       <button onClick={this.handleLoginClick}> Login </button>
-    //     </div>
-    //   );
-    // }
-
-    // if (this.state.initializingMessage) {
-    //   mainBody = <p>{this.state.initializingMessage}</p>;
-    // }
+    if (this.state.initializingMessage) {
+      mainBody = <p>{this.state.initializingMessage}</p>;
+    }
 
     return (
       <Router>
@@ -122,20 +129,43 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.loadData();
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("token");
+    if(token) {
+      localStorage.setItem("token", token);
+      // redirect to URL without the API info as query params
+      const url = new URL(window.location.href);
+      window.location.href = url.protocol + "//" + url.host;
+      this.setState({token: token});
+      return;
+    }
+
+    if(this.state.token) {
+      this.loadData();
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.token !== this.state.token) {
+      this.setState({budgetClient: new BudgetClient(this.props.budgetAPIUrl, this.state.token)});
+      return;
+    }
+
+    if (prevState.budgetClient != this.state.budgetClient) {
+      // the token was updated so we should try to
+      // fetch the data again.
+      this.loadData();
+    }
+  }
+
+  loadData() {
+    if(!this.state.budgetClient) {
+      return;
+    }
     this.loadTransactions();
     this.loadSpendingView();
     this.loadSpendingLimits();
     this.loadAnnualSpendingLimits();
-    // this.setupAPIClient(null);
-  }
-
-  loadData() {
-
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    this.setupAPIClient(prevState.config);
   }
 
   setupAPIClient(prevConfig) {
@@ -316,11 +346,12 @@ class App extends Component {
   };
 
   loadTransactions = () => {
-    this.props.budgetClient
+    this.state.budgetClient
       .listTransactions()
       .then((transactions) => {
         this.setState({
           transactions: transactions,
+          initializingMessage: "",
         });
       })
       .catch((error) => {
@@ -329,11 +360,12 @@ class App extends Component {
   };
 
   loadSpendingView = () => {
-    this.props.budgetClient
+    this.state.budgetClient
       .getCurrentSpending()
       .then((currentSpending) => {
         this.setState({
           currentSpending: currentSpending,
+          initializingMessage: "",
         });
       })
       .catch((error) => {
@@ -342,11 +374,12 @@ class App extends Component {
   };
 
   loadSpendingLimits = () => {
-    this.props.budgetClient
+    this.state.budgetClient
       .getCategoryLimits()
       .then((spendingLimits) => {
         this.setState({
           spendingLimits: spendingLimits,
+          initializingMessage: "",
         });
       })
       .catch((error) => {
@@ -355,11 +388,12 @@ class App extends Component {
   };
 
   loadAnnualSpendingLimits = () => {
-    this.props.budgetClient
+    this.state.budgetClient
       .getAnnualLimits()
       .then((annualBudget) => {
         this.setState({
           annualBudget: annualBudget,
+          initializingMessage: "",
         });
       })
       .catch((error) => {
