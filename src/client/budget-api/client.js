@@ -4,7 +4,7 @@ class BudgetClient {
   constructor(url, token) {
     this.url = url;
     this.httpClient = axios.create({
-      baseURL: `${url}/v1`,
+      baseURL: `${url}/api/v1`,
       timeout: 10000,
       headers: { "X-Auth-Token": token },
     });
