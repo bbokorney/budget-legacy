@@ -14,37 +14,12 @@ class AddTransactionForm extends Component {
       amount: "",
       floatAmount: 0,
       category: null,
-      categories: [],
       vendor: "",
       addingTransaction: false,
       transactionAdded: false,
       error: "",
     };
-
-    this.loadCategories();
   }
-
-  loadCategories = () => {
-    const currentComponent = this;
-
-    currentComponent.props.budgetClient
-      .listCategories()
-      .then((response) => {
-        const categories = response.map((c) => {
-          return {
-            label: c.name,
-            value: c.name,
-          };
-        });
-        currentComponent.setState({
-          categories: categories,
-        });
-      })
-      .catch((error) => {
-        console.log("Error listing categories");
-        console.log(error);
-      });
-  };
 
   handleAmountChange = (event, maskedValue, floatValue) => {
     this.setState({ amount: maskedValue, floatAmount: floatValue });
@@ -191,7 +166,7 @@ class AddTransactionForm extends Component {
           <Select
             className="AddTransactionForm-input AddTransactionForm-category"
             classNamePrefix="Categories"
-            options={this.state.categories}
+            options={this.props.categories}
             onChange={this.handleCategoryChange}
             isSearchable={false}
             disabled={disableSubmit}

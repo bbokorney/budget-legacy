@@ -18,22 +18,18 @@ class App extends Component {
     }
     var budgetClient = null;
     if(token) {
-      budgetClient =  new BudgetClient(this.props.budgetAPIUrl, token);
+      budgetClient = new BudgetClient(this.props.budgetAPIUrl, token);
     }
     this.state = {
       token: token,
       errorMessage: "",
       initializingMessage: initializingMessage,
       transactions: [],
+      categories: [],
       currentSpending: null,
       spendingLimits: null,
       annualBudget: null,
       budgetClient: budgetClient,
-      config: {
-        clientId: this.loadFromConfigWithDefault("clientId", ""),
-        apiKey: this.loadFromConfigWithDefault("apiKey", ""),
-        sheetId: this.loadFromConfigWithDefault("sheetId", ""),
-      },
     };
   }
 
@@ -60,16 +56,11 @@ class App extends Component {
         </Route>
         <Route path="/settings">
           <ConfigInfoForm
-            clearConfig={this.clearConfig}
-            onSubmit={this.handleConfigInfoSubmit}
-            config={this.state.config}
-            handleLoginClick={this.handleLoginClick}
-            handleLogoutClick={this.handleLogoutClick}
             version={this.props.version}
           />
         </Route>
         <Route path="/">
-          <AddTransactionForm budgetClient={this.state.budgetClient} />
+          <AddTransactionForm categories={this.state.categories} budgetClient={this.state.budgetClient} />
         </Route>
       </Switch>
     );
@@ -163,6 +154,7 @@ class App extends Component {
     this.loadSpendingView();
     this.loadSpendingLimits();
     this.loadAnnualSpendingLimits();
+    this.loadCategories();
   }
 
   handleError = (error) => {
@@ -222,6 +214,27 @@ class App extends Component {
         this.setState({
           annualBudget: annualBudget,
           initializingMessage: "",
+        });
+      })
+      .catch((error) => {
+        this.handleError(error);
+      });
+  };
+
+  loadCategories = () => {
+    const currentComponent = this;
+
+    currentComponent.state.budgetClient
+      .listCategories()
+      .then((response) => {
+        const categories = response.map((c) => {
+          return {
+            label: c.name,
+            value: c.name,
+          };
+        });
+        currentComponent.setState({
+          categories: categories,
         });
       })
       .catch((error) => {
